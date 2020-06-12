@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/motionLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/black"
+    android:clipChildren="false"
+    app:layoutDescription="@xml/enroll_scene"
+    tools:showPaths="true">
+
+    <!-- <com.flaviofaria.kenburnsview.KenBurnsView
+         android:id="@+id/imageViewBackground"
+         android:layout_width="match_parent"
+         android:layout_height="match_parent"
+         android:src="@drawable/color_placeholder" />
+     -->
+
+    <FrameLayout
+        android:id="@+id/cardViewImage"
+        android:layout_width="240dp"
+        android:layout_height="0dp"
+        android:padding="4dp">
+
+        <wee.digital.camera.RealSenseView
+            android:id="@+id/imageViewPreview"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:layout_width="match_parent"
+            tools:src="@drawable/img_placeholder" />
+
+    </FrameLayout>
+
+</androidx.constraintlayout.motion.widget.MotionLayout>
+

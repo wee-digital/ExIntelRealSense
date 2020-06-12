@@ -1,0 +1,46 @@
+apply plugin: 'com.android.library'
+
+apply plugin: 'kotlin-android'
+
+apply plugin: 'kotlin-android-extensions'
+
+apply plugin: "kotlin-kapt"
+
+android {
+
+    compileSdkVersion 29
+    defaultConfig {
+        minSdkVersion 22
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+        }
+    }
+}
+
+dependencies {
+
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta6'
+
+    //
+    implementation "com.google.firebase:firebase-ml-model-interpreter:22.0.1"
+    implementation "com.google.firebase:firebase-ml-vision-face-model:19.0.0"
+    implementation "com.google.firebase:firebase-ml-vision-automl:18.0.3"
+    implementation "com.google.firebase:firebase-ml-vision:24.0.1"
+
+    //
+    implementation "com.intel.realsense:librealsense:2.34.0@aar"
+
+    //
+    implementation 'org.tensorflow:tensorflow-android:1.13.1'
+
+}
