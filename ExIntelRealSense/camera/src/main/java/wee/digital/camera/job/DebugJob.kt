@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.*
-import wee.digital.camera.Camera
+import wee.digital.camera.RealSense
 import wee.digital.camera.core.RealSenseControl
 import wee.digital.camera.detector.FaceDetector
 
@@ -28,8 +28,8 @@ class DebugJob(private var uiListener: UiListener) :
     }
 
     fun startRecord(lifecycleOwner: LifecycleOwner) {
-        Camera.instance.controlLiveData.observe(lifecycleOwner, Observer<RealSenseControl?> {
-            Camera.instance.listener = this
+        RealSense.instance.controlLiveData.observe(lifecycleOwner, Observer<RealSenseControl?> {
+            RealSense.instance.listener = this
             detector.start()
         })
         lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
@@ -41,7 +41,7 @@ class DebugJob(private var uiListener: UiListener) :
     }
 
     fun stopRecord() {
-        Camera.instance.listener = null
+        RealSense.instance.listener = null
         detector.destroy()
     }
 

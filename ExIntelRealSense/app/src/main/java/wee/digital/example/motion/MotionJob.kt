@@ -4,7 +4,7 @@ import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.*
-import wee.digital.camera.Camera
+import wee.digital.camera.RealSense
 import wee.digital.camera.core.RealSenseControl
 import wee.digital.camera.detector.FaceDetector
 import wee.digital.camera.toBytes
@@ -27,9 +27,9 @@ class MotionJob(private var uiListener: Listener) :
     private var hasDetect: Boolean = false
 
     fun observe(lifecycleOwner: LifecycleOwner) {
-        Camera.instance.controlLiveData.observe(lifecycleOwner, Observer<RealSenseControl?> {
+        RealSense.instance.controlLiveData.observe(lifecycleOwner, Observer<RealSenseControl?> {
             it ?: return@Observer
-            Camera.instance.listener = this
+            RealSense.instance.listener = this
             detector.start()
         })
 
@@ -41,7 +41,7 @@ class MotionJob(private var uiListener: Listener) :
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             fun destroy() {
                 hasDetect = false
-                Camera.instance.listener = null
+                RealSense.instance.listener = null
                 detector.destroy()
             }
         })
@@ -91,7 +91,7 @@ class MotionJob(private var uiListener: Listener) :
      * [FaceDetector.StatusListener] implement
      */
     override fun onFacePerformed() {
-        Camera.instance.hasFace()
+        RealSense.instance.hasFace()
         invalidFaceCount.set(0)
         noneFaceCount.set(0)
     }

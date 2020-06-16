@@ -8,7 +8,6 @@ import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import kotlinx.android.synthetic.main.widget_camera_view.view.*
-import wee.digital.camera.Camera
 import wee.digital.camera.R
 import wee.digital.camera.core.RealSenseControl
 import wee.digital.camera.job.DebugJob
@@ -29,16 +28,6 @@ class CameraView : ConstraintLayout, DebugJob.UiListener {
             defStyleAttr
     ) {
         onViewInit(context)
-    }
-
-    override fun onAttachedToWindow() {
-        super.onAttachedToWindow()
-        Camera.instance.start()
-    }
-
-    override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
-        Camera.instance.destroy()
     }
 
     private fun onViewInit(context: Context) {

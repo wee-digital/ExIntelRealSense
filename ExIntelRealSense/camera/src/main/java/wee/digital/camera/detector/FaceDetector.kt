@@ -19,7 +19,7 @@ class FaceDetector {
 
     private var depthFilter = ModelFilter("face/depth/manifest.json")
 
-    private var mtcnn: MTCNN = MTCNN(Camera.app.assets)
+    private var mtcnn: MTCNN = MTCNN(RealSense.app.assets)
 
     private var mCurFace: Box? = null
 

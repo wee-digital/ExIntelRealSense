@@ -1,7 +1,7 @@
 package wee.digital.example
 
 import android.app.Application
-import wee.digital.camera.Camera
+import wee.digital.camera.RealSense
 
 class App : Application() {
 
@@ -11,13 +11,14 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Camera.app = this
-        Camera.instance.start()
+        instance = this
+        RealSense.app = this
+        RealSense.instance.start()
     }
 
     override fun onTerminate() {
         super.onTerminate()
-        Camera.instance.destroy()
+        RealSense.instance.destroy()
     }
 
 }
