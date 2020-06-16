@@ -31,97 +31,29 @@ class RealSenseControl {
         const val FRAME_RATE = 10
         const val FRAME_MAX_COUNT = 200 // Run 10s
         const val FRAME_MAX_SLEEP = -20 // Sleep 1s
-
     }
 
     var listener: Listener? = null
-    private val colorizer: Colorizer = Colorizer().apply {
-        setValue(Option.COLOR_SCHEME, 0f)
-    }
+
+    private var colorizer: Colorizer? = null
     private var pipeline: Pipeline? = null
-    private var isDestroy = false
-    private var isFrameOK = false
-    private var mHandlerThread: HandlerThread? = null
-    private var mHandler: Handler? = null
-    private var mIsStreaming = false
+    private var pipelineProfile: PipelineProfile? = null
+
     private var colorBitmap: Bitmap? = null
     private var depthBitmap: Bitmap? = null
-    private var mDevice: Device? = null
-    private var isDeviceAttach = false
-    private var mFrameCount = FRAME_MAX_COUNT
+
+    private var isDestroy = false
+    private var isFrameOK = false
     var isPauseCamera = false
     private var isSleep = false
     private var isProcessingFrame = false
+    private var isStreaming = false
 
+    private var mFrameCount = FRAME_MAX_COUNT
 
-    init {
-        mHandlerThread = HandlerThread("streaming")
-        mHandlerThread?.start()
-        mHandler = Handler(mHandlerThread!!.looper)
-    }
-
-    fun onCreate() {
-        pipeline = Pipeline()
-        startStreamThread()
-    }
-
-    fun hasFace() {
-        // Reset sleep time when has face
-        mFrameCount = FRAME_MAX_COUNT
-    }
-
-    @Synchronized
-    fun onPause() {
-        isDestroy = true
-        stopStreamThread()
-        mHandlerThread?.quitSafely()
-        pipeline = null
-    }
-
-    private fun initDevice(): Device? {
-        return Config().use { config ->
-            try {
-                config.enableStream(StreamType.COLOR, 0, COLOR_WIDTH, COLOR_HEIGHT, StreamFormat.RGB8, FRAME_RATE)
-                config.enableStream(StreamType.DEPTH, 0, DEPTH_WIDTH, DEPTH_HEIGHT, StreamFormat.Z16, FRAME_RATE)
-                pipeline?.start(config)?.device
-            } catch (e: Exception) {
-                debug("Start Stream Error: ${e.message}")
-                mIsStreaming = false
-                null
-            }
-        }
-    }
-
-    private fun startStreamThread() {
-        if (mIsStreaming) return
-        debug("try start streaming")
-        try {
-            mIsStreaming = true
-            mDevice = initDevice()
-            if (mDevice != null) {
-                mHandler?.post(mStreaming)
-                debug("streaming started successfully")
-            }
-        } catch (e: Throwable) {
-            debug("failed to start streaming : ${e.message}")
-        }
-
-    }
-
-    private fun stopStreamThread() {
-        if (!mIsStreaming) return
-        debug("try stop streaming")
-        try {
-            mIsStreaming = false
-            pipeline?.stop()
-            debug("streaming stopped successfully")
-        } catch (e: Throwable) {
-            debug("failed to stop streaming : ${e.message}")
-            pipeline = null
-        }
-    }
-
-    private val mStreaming: Runnable = object : Runnable {
+    private var mHandlerThread: HandlerThread? = null
+    private var mHandler: Handler? = null
+    private val streamRunnable: Runnable = object : Runnable {
         override fun run() {
             val isNext = try {
                 FrameReleaser().use { fr ->
@@ -134,15 +66,20 @@ class RealSenseControl {
                             isSleep = true
                             true
                         }
+                        //debug("Pipeline Wait.........")
                         isProcessingFrame = true
-                        val frames: FrameSet = pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
+                        val frames: FrameSet =
+                            pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
                         if (isFrameOK) {
+                            //debug("Run $mFrameCount")
                             mFrameCount--
                             when {
                                 mFrameCount > 0 -> {
-                                    val colorFrame = frames.first(StreamType.COLOR).releaseWith(fr)
-                                    val processFrame = frames.applyFilter(colorizer).releaseWith(fr)
-                                    val depthFrame =
+                                    val colorFrame: Frame =
+                                        frames.first(StreamType.COLOR).releaseWith(fr)
+                                    val processFrame =
+                                        frames.applyFilter(colorizer).releaseWith(fr)
+                                    val depthFrame: Frame =
                                         processFrame.first(StreamType.DEPTH).releaseWith(fr)
                                     frameProcessing(colorFrame, depthFrame)
                                 }
@@ -165,6 +102,7 @@ class RealSenseControl {
                         isSleep = false
                         true
                     } catch (e: Throwable) {
+                        debug("FrameReleaser ${e.message}")
                         listener?.onCameraMessage("FrameReleaser ${e.message}")
                         isProcessingFrame = false
                         false
@@ -183,9 +121,34 @@ class RealSenseControl {
                 }
             } else {
                 isFrameOK = false
+                // stopStreamThread()
                 hardwareReset()
             }
 
+        }
+    }
+
+    init {
+        mHandlerThread = HandlerThread("streaming")
+        mHandlerThread?.start()
+        mHandler = Handler(mHandlerThread!!.looper)
+    }
+
+    fun onCreate() {
+        debug("Version: ${RsContext.getVersion()}")
+        colorizer = Colorizer().apply {
+            setValue(Option.COLOR_SCHEME, 0f)
+        }
+        if (isStreaming) return
+        pipeline = Pipeline()
+        try {
+            isStreaming = true
+            pipelineProfile = initPipelineProfile()?.apply {
+                mHandler?.post(streamRunnable)
+                debug("streaming started successfully")
+            }
+        } catch (e: java.lang.Exception) {
+            debug("failed to start streaming : ${e.message}")
         }
     }
 
@@ -200,6 +163,7 @@ class RealSenseControl {
                 it.onCameraData(colorBitmap, depthBitmap)
             }
             isProcessingFrame = false
+
         } catch (e: java.lang.Exception) {
             isProcessingFrame = false
             e.printStackTrace()
@@ -209,10 +173,51 @@ class RealSenseControl {
         }
     }
 
+    fun hasFace() {
+        mFrameCount = FRAME_MAX_COUNT
+    }
+
+    @Synchronized
+    fun onPause() {
+        isStreaming = false
+        isDestroy = true
+        mHandlerThread?.quitSafely()
+        pipeline?.stop()
+        pipelineProfile?.close()
+    }
+
+    private fun initPipelineProfile(): PipelineProfile? {
+        return Config().use { config ->
+            try {
+                config.enableStream(
+                    StreamType.COLOR,
+                    0,
+                    COLOR_WIDTH,
+                    COLOR_HEIGHT,
+                    StreamFormat.RGB8,
+                    FRAME_RATE
+                )
+                config.enableStream(
+                    StreamType.DEPTH,
+                    0,
+                    DEPTH_WIDTH,
+                    DEPTH_HEIGHT,
+                    StreamFormat.Z16,
+                    FRAME_RATE
+                )
+                pipeline!!.start(config)
+            } catch (e: Exception) {
+                debug("Start Stream Error: ${e.message}")
+                isStreaming = false
+                null
+            }
+        }
+    }
+
     @Throws
     private fun hardwareReset() {
-        if (isDeviceAttach) try {
-            mDevice?.hardwareReset()
+        try {
+            pipelineProfile?.device?.hardwareReset()
         } catch (ignore: RuntimeException) {
         }
     }

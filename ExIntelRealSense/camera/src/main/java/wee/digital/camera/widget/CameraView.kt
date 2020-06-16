@@ -23,9 +23,9 @@ class CameraView : ConstraintLayout, DebugJob.UiListener {
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-            context,
-            attrs,
-            defStyleAttr
+        context,
+        attrs,
+        defStyleAttr
     ) {
         onViewInit(context)
     }
@@ -106,33 +106,33 @@ class CameraView : ConstraintLayout, DebugJob.UiListener {
         val set = ConstraintSet()
         set.clone(viewPreview)
         set.connect(
-                imageViewCensored.id,
-                ConstraintSet.START,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.START,
-                viewPreview.width * left / RealSenseControl.COLOR_WIDTH
+            imageViewCensored.id,
+            ConstraintSet.START,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.START,
+            viewPreview.width * left / RealSenseControl.COLOR_WIDTH
         )
         set.connect(
-                imageViewCensored.id,
-                ConstraintSet.END,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.END,
-                viewPreview.width - (viewPreview.width * (left + width) / RealSenseControl.COLOR_WIDTH)
+            imageViewCensored.id,
+            ConstraintSet.END,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.END,
+            viewPreview.width - (viewPreview.width * (left + width) / RealSenseControl.COLOR_WIDTH)
         )
 
         set.connect(
-                imageViewCensored.id,
-                ConstraintSet.TOP,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.TOP,
-                viewPreview.height * top / RealSenseControl.COLOR_HEIGHT
+            imageViewCensored.id,
+            ConstraintSet.TOP,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.TOP,
+            viewPreview.height * top / RealSenseControl.COLOR_HEIGHT
         )
         set.connect(
-                imageViewCensored.id,
-                ConstraintSet.BOTTOM,
-                ConstraintSet.PARENT_ID,
-                ConstraintSet.BOTTOM,
-                viewPreview.height - (viewPreview.height * (top + height) / RealSenseControl.COLOR_HEIGHT)
+            imageViewCensored.id,
+            ConstraintSet.BOTTOM,
+            ConstraintSet.PARENT_ID,
+            ConstraintSet.BOTTOM,
+            viewPreview.height - (viewPreview.height * (top + height) / RealSenseControl.COLOR_HEIGHT)
         )
         set.applyTo(viewPreview)
     }

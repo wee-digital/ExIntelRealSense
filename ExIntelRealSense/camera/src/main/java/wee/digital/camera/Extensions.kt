@@ -33,9 +33,9 @@ fun uiThread(delay: Long, block: () -> Unit) {
 }
 
 fun FragmentActivity?.addFragment(
-        fragment: Fragment, @IdRes container: Int,
-        backStack: Boolean = true,
-        animations: IntArray? = null
+    fragment: Fragment, @IdRes container: Int,
+    backStack: Boolean = true,
+    animations: IntArray? = null
 ) {
     this ?: return
     val tag = fragment::class.java.simpleName
@@ -46,9 +46,9 @@ fun FragmentActivity?.addFragment(
 }
 
 fun FragmentActivity?.replaceFragment(
-        fragment: Fragment, @IdRes container: Int,
-        backStack: Boolean = true,
-        animations: IntArray? = null
+    fragment: Fragment, @IdRes container: Int,
+    backStack: Boolean = true,
+    animations: IntArray? = null
 ) {
     this ?: return
     val tag = fragment::class.java.simpleName
@@ -86,13 +86,13 @@ fun FragmentActivity?.remove(tag: String?, animations: IntArray? = null) {
 }
 
 fun FragmentManager.scheduleTransaction(
-        block: FragmentTransaction.() -> Unit,
-        animations: IntArray? = null
+    block: FragmentTransaction.() -> Unit,
+    animations: IntArray? = null
 ) {
 
     val transaction = beginTransaction()
     if (null != animations) transaction.setCustomAnimations(
-            animations[0],
+        animations[0],
         animations[1],
         animations[2],
         animations[3]

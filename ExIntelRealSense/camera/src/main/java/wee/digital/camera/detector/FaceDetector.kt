@@ -44,18 +44,18 @@ class FaceDetector {
         if (isDetecting) return
         isDetecting = true
         mtcnn.detectFacesAsync(colorBitmap, MIN_SIZE)
-                .addOnCompleteListener { isDetecting = false }
-                .addOnCanceledListener { isDetecting = false }
-                .addOnFailureListener { statusListener?.onFaceLeaved() }
-                .addOnCompleteListener { task ->
-                    val box: Box? = task.result.largestBox()
-                    if (box == null) {
-                        statusListener?.onFaceLeaved()
-                    } else {
-                        statusListener?.onFacePerformed()
-                        onFaceDetect(box, colorBitmap, depthBitmap)
-                    }
+            .addOnCompleteListener { isDetecting = false }
+            .addOnCanceledListener { isDetecting = false }
+            .addOnFailureListener { statusListener?.onFaceLeaved() }
+            .addOnCompleteListener { task ->
+                val box: Box? = task.result.largestBox()
+                if (box == null) {
+                    statusListener?.onFaceLeaved()
+                } else {
+                    statusListener?.onFacePerformed()
+                    onFaceDetect(box, colorBitmap, depthBitmap)
                 }
+            }
     }
 
     fun destroy() {

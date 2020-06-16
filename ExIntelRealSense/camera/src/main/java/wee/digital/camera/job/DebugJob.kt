@@ -13,12 +13,13 @@ import wee.digital.camera.detector.FaceDetector
  * simple callback wrapper on UI
  */
 class DebugJob(private var uiListener: UiListener) :
-        RealSenseControl.Listener,
-        FaceDetector.OptionListener,
-        FaceDetector.DataListener,
-        FaceDetector.StatusListener {
+    RealSenseControl.Listener,
+    FaceDetector.OptionListener,
+    FaceDetector.DataListener,
+    FaceDetector.StatusListener {
 
-    interface UiListener : FaceDetector.OptionListener, FaceDetector.DataListener, FaceDetector.StatusListener
+    interface UiListener : FaceDetector.OptionListener, FaceDetector.DataListener,
+        FaceDetector.StatusListener
 
 
     private val detector: FaceDetector = FaceDetector().also {

@@ -1,6 +1,11 @@
 package wee.digital.camera
 
 import android.app.Application
+import android.app.PendingIntent
+import android.content.Intent
+import android.hardware.usb.UsbDevice
+import android.hardware.usb.UsbManager
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import com.intel.realsense.librealsense.RsContext
 import com.intel.realsense.librealsense.UsbUtilities
@@ -42,6 +47,41 @@ class RealSense {
         set(value) {
             controlLiveData.value?.listener = value
         }
+
+    val manager: UsbManager =
+        ContextCompat.getSystemService(app, UsbManager::class.java) as UsbManager
+
+    val deviceList: List<UsbDevice>
+        get() {
+            val list = mutableListOf<UsbDevice>()
+            val map: HashMap<String, UsbDevice> = manager.deviceList
+            map.forEach { list.add(it.value) }
+            return list
+        }
+
+    val device: UsbDevice?
+        get() {
+            deviceList.forEach { if (VENDOR_ID == it.vendorId) return it }
+            return null
+        }
+
+    fun requestPermission() {
+        val usb = device ?: return
+        if (!manager.hasPermission(usb)) {
+            val intent =
+                PendingIntent.getBroadcast(app, 1234, Intent(".USB_PERMISSION"), 0)
+            manager.requestPermission(usb, intent)
+        }
+    }
+
+    fun forceClose() {
+        val usb = device ?: return
+        val connection = manager.openDevice(usb)
+        for (i in usb.interfaceCount - 1 downTo 0) {
+            connection.releaseInterface(usb.getInterface(i))
+        }
+        connection.close()
+    }
 
     fun start() {
         Thread {
