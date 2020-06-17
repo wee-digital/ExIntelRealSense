@@ -25,9 +25,9 @@
 
         <wee.digital.camera.RealSenseView
             android:id="@+id/imageViewPreview"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:layout_width="match_parent"
             tools:src="@drawable/img_placeholder" />
 
     </FrameLayout>

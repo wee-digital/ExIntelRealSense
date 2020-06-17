@@ -15,7 +15,7 @@ import wee.digital.example.R
 import wee.digital.example.member.PortraitFragment
 
 class EnrollFragment : Fragment(),
-        EnrollJob.Listener {
+    EnrollJob.Listener {
 
     private val faceAuthJob: EnrollJob = EnrollJob(this)
 
@@ -59,9 +59,6 @@ class EnrollFragment : Fragment(),
     }
 
 
-
-
-
     /**
      * An emulator network enroll request delayed 5 seconds
      * Replace with your presenter or view model or controller
@@ -88,7 +85,7 @@ class EnrollFragment : Fragment(),
         enrollHandler.postDelayed(enrollRunnable, 5000)
     }
 
-    private fun disposeEnrollRequest()  {
+    private fun disposeEnrollRequest() {
         isOnRequest = false
         progressBar?.visibility = View.INVISIBLE
         enrollRunnable?.also {

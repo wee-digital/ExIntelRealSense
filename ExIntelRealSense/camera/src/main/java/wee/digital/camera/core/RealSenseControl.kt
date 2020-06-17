@@ -189,23 +189,9 @@ class RealSenseControl {
     private fun initPipelineProfile(): PipelineProfile? {
         return Config().use { config ->
             try {
-                config.enableStream(
-                    StreamType.COLOR,
-                    0,
-                    COLOR_WIDTH,
-                    COLOR_HEIGHT,
-                    StreamFormat.RGB8,
-                    FRAME_RATE
-                )
-                config.enableStream(
-                    StreamType.DEPTH,
-                    0,
-                    DEPTH_WIDTH,
-                    DEPTH_HEIGHT,
-                    StreamFormat.Z16,
-                    FRAME_RATE
-                )
-                pipeline!!.start(config)
+                config.enableStream(StreamType.COLOR, 0, COLOR_WIDTH, COLOR_HEIGHT, StreamFormat.RGB8, FRAME_RATE)
+                config.enableStream(StreamType.DEPTH, 0, DEPTH_WIDTH, DEPTH_HEIGHT, StreamFormat.Z16, FRAME_RATE)
+                pipeline?.start(config)
             } catch (e: Exception) {
                 debug("Start Stream Error: ${e.message}")
                 isStreaming = false
