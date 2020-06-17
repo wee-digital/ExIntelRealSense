@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        RealSense.instance.requestPermission()
+
         viewDebug.setOnClickListener {
             addFragment(DebugFragment(), R.id.fragmentContainer, true)
         }
@@ -30,6 +30,12 @@ class MainActivity : AppCompatActivity() {
         }
         viewCapturePortrait.setOnClickListener {
             Toast.makeText(this, "chua code xong", Toast.LENGTH_SHORT).show()
+        }
+        viewStart.setOnClickListener {
+            RealSense.start()
+        }
+        viewStop.setOnClickListener {
+            RealSense.stop()
         }
     }
 }

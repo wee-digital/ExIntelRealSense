@@ -69,7 +69,7 @@ class RealSenseControl {
                         //debug("Pipeline Wait.........")
                         isProcessingFrame = true
                         val frames: FrameSet =
-                            pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
+                                pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
                         if (isFrameOK) {
                             //debug("Run $mFrameCount")
                             mFrameCount--

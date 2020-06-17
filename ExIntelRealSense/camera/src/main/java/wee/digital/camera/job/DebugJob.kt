@@ -29,8 +29,8 @@ class DebugJob(private var uiListener: UiListener) :
     }
 
     fun startRecord(lifecycleOwner: LifecycleOwner) {
-        RealSense.instance.controlLiveData.observe(lifecycleOwner, Observer<RealSenseControl?> {
-            RealSense.instance.listener = this
+        RealSense.controlLiveData.observe(lifecycleOwner, Observer<RealSenseControl?> {
+            RealSense.listener = this
             detector.start()
         })
         lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
@@ -42,7 +42,7 @@ class DebugJob(private var uiListener: UiListener) :
     }
 
     fun stopRecord() {
-        RealSense.instance.listener = null
+        RealSense.listener = null
         detector.destroy()
     }
 

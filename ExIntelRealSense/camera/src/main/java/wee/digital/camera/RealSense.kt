@@ -2,40 +2,32 @@ package wee.digital.camera
 
 import android.app.Application
 import android.app.PendingIntent
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.hardware.usb.UsbDevice
+import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
-import com.intel.realsense.librealsense.RsContext
-import com.intel.realsense.librealsense.UsbUtilities
 import wee.digital.camera.core.RealSenseControl
 
-class RealSense {
+object RealSense {
 
-    companion object {
+    const val VENDOR_ID: Int = 32902
+    const val PRODUCT_ID: Int = 2888
+    private const val PERMISSION = ".USB_PERMISSION"
 
-        const val VENDOR_ID: Int = 32902
-        const val PRODUCT_ID: Int = 2888
+    private var mApp: Application? = null
 
-        private var mApp: Application? = null
-
-        var app: Application
-            set(value) {
-                mApp = value
-            }
-            get() {
-                if (null == mApp) throw NullPointerException("module not be set")
-                return mApp!!
-            }
-
-        val instance: RealSense by lazy(LazyThreadSafetyMode.SYNCHRONIZED) {
-            RsContext.init(mApp)
-            UsbUtilities.grantUsbPermissionIfNeeded(mApp)
-            RealSense()
+    var app: Application
+        set(value) {
+            mApp = value
         }
-
-    }
+        get() {
+            if (null == mApp) throw NullPointerException("module not be set")
+            return mApp!!
+        }
 
     /**
      * Callback when [RealSenseControl] device control initialized or reinitialized
@@ -48,41 +40,6 @@ class RealSense {
             controlLiveData.value?.listener = value
         }
 
-    val manager: UsbManager =
-        ContextCompat.getSystemService(app, UsbManager::class.java) as UsbManager
-
-    val deviceList: List<UsbDevice>
-        get() {
-            val list = mutableListOf<UsbDevice>()
-            val map: HashMap<String, UsbDevice> = manager.deviceList
-            map.forEach { list.add(it.value) }
-            return list
-        }
-
-    val device: UsbDevice?
-        get() {
-            deviceList.forEach { if (VENDOR_ID == it.vendorId) return it }
-            return null
-        }
-
-    fun requestPermission() {
-        val usb = device ?: return
-        if (!manager.hasPermission(usb)) {
-            val intent =
-                PendingIntent.getBroadcast(app, 1234, Intent(".USB_PERMISSION"), 0)
-            manager.requestPermission(usb, intent)
-        }
-    }
-
-    fun forceClose() {
-        val usb = device ?: return
-        val connection = manager.openDevice(usb)
-        for (i in usb.interfaceCount - 1 downTo 0) {
-            connection.releaseInterface(usb.getInterface(i))
-        }
-        connection.close()
-    }
-
     fun start() {
         Thread {
             RealSenseControl().also {
@@ -93,15 +50,89 @@ class RealSense {
         }.start()
     }
 
-    fun destroy() {
-        val control = controlLiveData.value
+    fun stop() {
         Thread {
-            control?.onPause()
+            controlLiveData.value?.onPause()
         }.start()
+        controlLiveData.postValue(null)
     }
 
     fun hasFace() {
         controlLiveData.value?.hasFace()
+    }
+
+    /**
+     * Usb util
+     */
+    @JvmStatic
+    val usbManager: UsbManager
+        get() = app.getSystemService(Context.USB_SERVICE) as UsbManager
+
+    @JvmStatic
+    val usbDevices: Collection<UsbDevice>
+        get() = usbManager.deviceList.values
+
+    private val intentFilter: IntentFilter by lazy {
+        IntentFilter(PERMISSION).also {
+            it.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED)
+            it.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED)
+        }
+    }
+
+    val device: UsbDevice?
+        get() {
+            usbDevices.forEach {
+                if (it.vendorId == VENDOR_ID && it.productId == PRODUCT_ID) return it
+            }
+            return null
+        }
+
+    private fun usbReceiver(permissionGranted: () -> Unit): BroadcastReceiver {
+        return object : BroadcastReceiver() {
+            override fun onReceive(context: Context, intent: Intent) {
+                val usb = intent.getParcelableExtra<UsbDevice>(UsbManager.EXTRA_DEVICE)
+                if (usb.vendorId != VENDOR_ID || usb.productId != PRODUCT_ID) return
+                if (intent.action === UsbManager.ACTION_USB_DEVICE_DETACHED) return
+                if (intent.action === UsbManager.ACTION_USB_DEVICE_ATTACHED) {
+                    if (usbManager.hasPermission(usb)) {
+                        permissionGranted()
+                    } else {
+                        requestPermission(usb)
+                    }
+                }
+                if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                    permissionGranted()
+                }
+            }
+        }
+    }
+
+    @JvmStatic
+    fun open(usb: UsbDevice?): UsbDeviceConnection {
+        return usbManager.openDevice(usb)
+    }
+
+    fun requestPermission(usb: UsbDevice?, permissionGranted: () -> Unit = {}) {
+        if (hasPermission(usb)) {
+            permissionGranted()
+            return
+        }
+
+        app.registerReceiver(usbReceiver(permissionGranted), intentFilter)
+        val permissionIntent = PendingIntent.getBroadcast(app, 1234, Intent(PERMISSION), 0)
+
+        usb ?: return
+        usbManager.requestPermission(usb, permissionIntent)
+    }
+
+    fun requestPermission(permissionGranted: () -> Unit = {}) {
+        requestPermission(device, permissionGranted)
+    }
+
+    @JvmStatic
+    fun hasPermission(usb: UsbDevice?): Boolean {
+        usb ?: return false
+        return usbManager.hasPermission(usb)
     }
 
 }

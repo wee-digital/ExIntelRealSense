@@ -26,9 +26,9 @@ class EnrollJob(private var uiListener: Listener) :
     private var hasDetect: Boolean = false
 
     fun observe(lifecycleOwner: LifecycleOwner) {
-        RealSense.instance.controlLiveData.observe(lifecycleOwner, Observer<RealSenseControl?> {
+        RealSense.controlLiveData.observe(lifecycleOwner, Observer<RealSenseControl?> {
             it ?: return@Observer
-            RealSense.instance.listener = this
+            RealSense.listener = this
             detector.start()
         })
 
@@ -41,7 +41,7 @@ class EnrollJob(private var uiListener: Listener) :
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             fun destroy() {
                 hasDetect = false
-                RealSense.instance.listener = null
+                RealSense.listener = null
                 detector.destroy()
             }
         })
@@ -91,7 +91,7 @@ class EnrollJob(private var uiListener: Listener) :
      * [FaceDetector.StatusListener] implement
      */
     override fun onFacePerformed() {
-        RealSense.instance.hasFace()
+        RealSense.hasFace()
         invalidFaceCount.set(0)
         noneFaceCount.set(0)
     }

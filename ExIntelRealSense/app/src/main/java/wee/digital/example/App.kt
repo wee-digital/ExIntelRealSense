@@ -13,12 +13,6 @@ class App : Application() {
         super.onCreate()
         instance = this
         RealSense.app = this
-        RealSense.instance.start()
-    }
-
-    override fun onTerminate() {
-        super.onTerminate()
-        RealSense.instance.destroy()
     }
 
 }
