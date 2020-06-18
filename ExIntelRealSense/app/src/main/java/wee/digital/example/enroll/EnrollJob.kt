@@ -110,7 +110,7 @@ class EnrollJob(private var uiListener: Listener) :
     }
 
     override fun onPortraitImage(image: Bitmap, portrait: Bitmap) {
-        if (!hasDetect || portrait == null) return
+        if (!hasDetect) return
         noneFaceCount.set(0)
         mainThread {
             uiListener.onFaceDetected(image, portrait)

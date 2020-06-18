@@ -40,8 +40,8 @@ class EnrollFragment : Fragment(),
     /**
      * [EnrollJob.Listener] implement
      */
-    override fun onFaceDetected(bitmap: Bitmap) {
-        onEnrollRequest(bitmap)
+    override fun onFaceDetected(image: Bitmap, portrait: Bitmap) {
+        onEnrollRequest(portrait)
     }
 
     override fun onFaceLeaved() {

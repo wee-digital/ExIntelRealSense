@@ -83,8 +83,8 @@ class CameraView : ConstraintLayout, DebugJob.UiListener {
         imageViewCropDepth.setImageBitmap(bitmap)
     }
 
-    override fun onPortraitImage(bitmap: Bitmap) {
-        imageViewPortrait?.setImageBitmap(bitmap)
+    override fun onPortraitImage(image: Bitmap, portrait: Bitmap) {
+        imageViewPortrait?.setImageBitmap(portrait)
     }
 
     override fun onFaceLeaved() {

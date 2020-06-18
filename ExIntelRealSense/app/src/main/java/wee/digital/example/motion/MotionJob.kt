@@ -109,12 +109,12 @@ class MotionJob(private var uiListener: Listener) :
         invalidFaceCount.set(0)
     }
 
-    override fun onPortraitImage(bitmap: Bitmap) {
-        if (!hasDetect || bitmap == null) return
+    override fun onPortraitImage(image: Bitmap, portrait: Bitmap) {
+        if (!hasDetect) return
         stopDetect()
         noneFaceCount.set(0)
         mainThread {
-            uiListener.onFaceDetected(bitmap.toBytes())
+            uiListener.onFaceDetected(portrait.toBytes())
         }
     }
 
