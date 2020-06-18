@@ -32,7 +32,9 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "chua code xong", Toast.LENGTH_SHORT).show()
         }
         viewStart.setOnClickListener {
-            RealSense.start()
+            RealSense.requestPermission {
+                RealSense.start()
+            }
         }
         viewStop.setOnClickListener {
             RealSense.stop()

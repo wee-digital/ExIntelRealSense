@@ -10,6 +10,7 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import androidx.lifecycle.MutableLiveData
+import com.intel.realsense.librealsense.RsContext
 import wee.digital.camera.core.RealSenseControl
 
 object RealSense {
@@ -23,6 +24,7 @@ object RealSense {
     var app: Application
         set(value) {
             mApp = value
+            RsContext.init(value)
         }
         get() {
             if (null == mApp) throw NullPointerException("module not be set")
@@ -79,19 +81,22 @@ object RealSense {
         }
     }
 
+    @JvmStatic
     val device: UsbDevice?
         get() {
             usbDevices.forEach {
-                if (it.vendorId == VENDOR_ID && it.productId == PRODUCT_ID) return it
+                if (it.vendorId == VENDOR_ID) return it
             }
             return null
         }
+
+    private var usbReceiver: BroadcastReceiver? = null
 
     private fun usbReceiver(permissionGranted: () -> Unit): BroadcastReceiver {
         return object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
                 val usb = intent.getParcelableExtra<UsbDevice>(UsbManager.EXTRA_DEVICE)
-                if (usb.vendorId != VENDOR_ID || usb.productId != PRODUCT_ID) return
+                if (usb.vendorId != VENDOR_ID) return
                 if (intent.action === UsbManager.ACTION_USB_DEVICE_DETACHED) return
                 if (intent.action === UsbManager.ACTION_USB_DEVICE_ATTACHED) {
                     if (usbManager.hasPermission(usb)) {
@@ -112,19 +117,25 @@ object RealSense {
         return usbManager.openDevice(usb)
     }
 
+    @JvmStatic
     fun requestPermission(usb: UsbDevice?, permissionGranted: () -> Unit = {}) {
         if (hasPermission(usb)) {
             permissionGranted()
             return
         }
 
-        app.registerReceiver(usbReceiver(permissionGranted), intentFilter)
-        val permissionIntent = PendingIntent.getBroadcast(app, 1234, Intent(PERMISSION), 0)
+        if (usbReceiver == null) {
+            usbReceiver = usbReceiver(permissionGranted).also {
+                app.registerReceiver(it, intentFilter)
+            }
+        }
 
         usb ?: return
+        val permissionIntent = PendingIntent.getBroadcast(app, 1234, Intent(PERMISSION), 0)
         usbManager.requestPermission(usb, permissionIntent)
     }
 
+    @JvmStatic
     fun requestPermission(permissionGranted: () -> Unit = {}) {
         requestPermission(device, permissionGranted)
     }

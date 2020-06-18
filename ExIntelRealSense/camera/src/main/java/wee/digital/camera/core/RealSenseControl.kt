@@ -69,7 +69,7 @@ class RealSenseControl {
                         //debug("Pipeline Wait.........")
                         isProcessingFrame = true
                         val frames: FrameSet =
-                                pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
+                            pipeline!!.waitForFrames(TIME_WAIT).releaseWith(fr)
                         if (isFrameOK) {
                             //debug("Run $mFrameCount")
                             mFrameCount--
@@ -129,26 +129,29 @@ class RealSenseControl {
     }
 
     init {
-        mHandlerThread = HandlerThread("streaming")
-        mHandlerThread?.start()
-        mHandler = Handler(mHandlerThread!!.looper)
+        mHandlerThread = HandlerThread("streaming")?.also {
+            it.start()
+            mHandler = Handler(it.looper)
+        }
     }
 
     fun onCreate() {
-        debug("Version: ${RsContext.getVersion()}")
         colorizer = Colorizer().apply {
             setValue(Option.COLOR_SCHEME, 0f)
         }
         if (isStreaming) return
-        pipeline = Pipeline()
         try {
-            isStreaming = true
-            pipelineProfile = initPipelineProfile()?.apply {
-                mHandler?.post(streamRunnable)
-                debug("streaming started successfully")
+            val config = Config().apply {
+                enableStream(StreamType.COLOR, 0, COLOR_WIDTH, COLOR_HEIGHT, StreamFormat.RGB8, FRAME_RATE)
+                enableStream(StreamType.DEPTH, 0, DEPTH_WIDTH, DEPTH_HEIGHT, StreamFormat.Z16, FRAME_RATE)
             }
-        } catch (e: java.lang.Exception) {
-            debug("failed to start streaming : ${e.message}")
+            pipeline = Pipeline()
+            pipelineProfile = pipeline?.start(config)?.apply {
+                isStreaming = true
+                mHandler?.post(streamRunnable)
+            }
+        } catch (t: Throwable) {
+            isStreaming = false
         }
     }
 
@@ -184,20 +187,6 @@ class RealSenseControl {
         mHandlerThread?.quitSafely()
         pipeline?.stop()
         pipelineProfile?.close()
-    }
-
-    private fun initPipelineProfile(): PipelineProfile? {
-        return Config().use { config ->
-            try {
-                config.enableStream(StreamType.COLOR, 0, COLOR_WIDTH, COLOR_HEIGHT, StreamFormat.RGB8, FRAME_RATE)
-                config.enableStream(StreamType.DEPTH, 0, DEPTH_WIDTH, DEPTH_HEIGHT, StreamFormat.Z16, FRAME_RATE)
-                pipeline?.start(config)
-            } catch (e: Exception) {
-                debug("Start Stream Error: ${e.message}")
-                isStreaming = false
-                null
-            }
-        }
     }
 
     @Throws

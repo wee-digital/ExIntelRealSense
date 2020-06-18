@@ -109,11 +109,11 @@ class EnrollJob(private var uiListener: Listener) :
         invalidFaceCount.set(0)
     }
 
-    override fun onPortraitImage(bitmap: Bitmap) {
-        if (!hasDetect || bitmap == null) return
+    override fun onPortraitImage(image: Bitmap, portrait: Bitmap) {
+        if (!hasDetect || portrait == null) return
         noneFaceCount.set(0)
         mainThread {
-            uiListener.onFaceDetected(bitmap)
+            uiListener.onFaceDetected(image, portrait)
         }
     }
 
@@ -129,7 +129,7 @@ class EnrollJob(private var uiListener: Listener) :
      */
     interface Listener {
 
-        fun onFaceDetected(bitmap: Bitmap)
+        fun onFaceDetected(image: Bitmap, portrait: Bitmap)
 
         fun onFaceLeaved()
 
