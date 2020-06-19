@@ -43,13 +43,13 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
         val floatValues = FloatArray(w * h * 3)
         val intValues = IntArray(w * h)
         bitmap.getPixels(
-                intValues,
-                0,
-                bitmap.width,
-                0,
-                0,
-                bitmap.width,
-                bitmap.height
+            intValues,
+            0,
+            bitmap.width,
+            0,
+            0,
+            bitmap.width,
+            bitmap.height
         )
         val imageMean = 127.5f
         val imageStd = 128f
@@ -73,15 +73,15 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
         // RESIZE THE BIT MAP
         matrix.postScale(scale, scale)
         return Bitmap.createBitmap(
-                bm, 0, 0, width, height, matrix, true
+            bm, 0, 0, width, height, matrix, true
         )
     }
 
     //flipBeforeInputAndFlipOutput
     private fun PNetForward(
-            bitmap: Bitmap,
-            PNetOutProb: Array<FloatArray>,
-            PNetOutBias: Array<Array<FloatArray>>
+        bitmap: Bitmap,
+        PNetOutProb: Array<FloatArray>,
+        PNetOutBias: Array<Array<FloatArray>>
     ): Int {
         val w = bitmap.width
         val h = bitmap.height
@@ -115,9 +115,9 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
     //Non-Maximum Suppression
 //nms，不符合条件的deleted设置为true
     private fun nms(
-            boxes: Vector<Box>,
-            threshold: Float,
-            method: String
+        boxes: Vector<Box>,
+        threshold: Float,
+        method: String
     ) { //NMS.两两比对
 //int delete_cnt=0;
 
@@ -135,7 +135,7 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
                         val areaIoU = (x2 - x1 + 1) * (y2 - y1 + 1)
                         var iou = 0f
                         if (method == "Union") iou =
-                                1.0f * areaIoU / (box.area() + box2.area() - areaIoU) else if (method == "Min") {
+                            1.0f * areaIoU / (box.area() + box2.area() - areaIoU) else if (method == "Min") {
                             iou = 1.0f * areaIoU / Math.min(box.area(), box2.area())
 
                         }
@@ -150,11 +150,11 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
     }
 
     private fun generateBoxes(
-            prob: Array<FloatArray>,
-            bias: Array<Array<FloatArray>>,
-            scale: Float,
-            threshold: Float,
-            boxes: Vector<Box>
+        prob: Array<FloatArray>,
+        bias: Array<Array<FloatArray>>,
+        scale: Float,
+        threshold: Float,
+        boxes: Vector<Box>
     ): Int {
         val h = prob.size
         val w: Int = prob[0].size
@@ -192,14 +192,14 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
      * 注意：CNN输入图片最上面一行，坐标为[0..width,0]。所以Bitmap需要对折后再跑网络;网络输出同理.
      */
     private fun PNet(
-            bitmap: Bitmap,
-            minSize: Int
+        bitmap: Bitmap,
+        minSize: Int
     ): Vector<Box> {
         val whMin = Math.min(bitmap.width, bitmap.height)
         var currentFaceSize =
-                minSize.toFloat() //currentFaceSize=minSize/(factor^k) k=0,1,2... until excced whMin
+            minSize.toFloat() //currentFaceSize=minSize/(factor^k) k=0,1,2... until excced whMin
         val totalBoxes =
-                Vector<Box>()
+            Vector<Box>()
         //【1】Image Paramid and Feed to Pnet
         while (currentFaceSize <= whMin) {
             val scale = 12.0f / currentFaceSize
@@ -211,22 +211,22 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
             val PNetOutSizeW = (Math.ceil(w * 0.5 - 5) + 0.5).toInt()
             val PNetOutSizeH = (Math.ceil(h * 0.5 - 5) + 0.5).toInt()
             val PNetOutProb =
-                    Array(PNetOutSizeH) { FloatArray(PNetOutSizeW) }
+                Array(PNetOutSizeH) { FloatArray(PNetOutSizeW) }
             val PNetOutBias =
-                    Array(
-                            PNetOutSizeH
-                    ) { Array(PNetOutSizeW) { FloatArray(4) } }
+                Array(
+                    PNetOutSizeH
+                ) { Array(PNetOutSizeW) { FloatArray(4) } }
             PNetForward(bm, PNetOutProb, PNetOutBias)
             //(3)数据解析
             val curBoxes =
-                    Vector<Box>()
+                Vector<Box>()
             generateBoxes(PNetOutProb, PNetOutBias, scale, PNetThreshold, curBoxes)
 
 //(4)nms 0.5
             nms(curBoxes, 0.5f, "Union")
             //(5)add to totalBoxes
             for (i in curBoxes.indices) if (!curBoxes[i].deleted) totalBoxes.addElement(
-                    curBoxes[i]
+                curBoxes[i]
             )
             //Face Size等比递增
             currentFaceSize /= factor
@@ -242,33 +242,33 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
     var tmp_bm: Bitmap? = null
 
     private fun crop_and_resize(
-            bitmap: Bitmap,
-            box: Box,
-            size: Int,
-            data: FloatArray
+        bitmap: Bitmap,
+        box: Box,
+        size: Int,
+        data: FloatArray
     ) { //(2)crop and resize
         val matrix = Matrix()
         val scale = 1.0f * size / box.width()
         matrix.postScale(scale, scale)
         val croped = Bitmap.createBitmap(
-                bitmap,
-                box.left(),
-                box.top(),
-                box.width(),
-                box.height(),
-                matrix,
-                true
+            bitmap,
+            box.left(),
+            box.top(),
+            box.width(),
+            box.height(),
+            matrix,
+            true
         )
         //(3)save
         val pixels_buf = IntArray(size * size)
         croped.getPixels(
-                pixels_buf,
-                0,
-                croped.width,
-                0,
-                0,
-                croped.width,
-                croped.height
+            pixels_buf,
+            0,
+            croped.width,
+            0,
+            0,
+            croped.width,
+            croped.height
         )
         val imageMean = 127.5f
         val imageStd = 128f
@@ -284,8 +284,8 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
      * RNET跑神经网络，将score和bias写入boxes
      */
     private fun RNetForward(
-            RNetIn: FloatArray,
-            boxes: Vector<Box>
+        RNetIn: FloatArray,
+        boxes: Vector<Box>
     ) {
         val num = RNetIn.size / 24 / 24 / 3
         //feed & run
@@ -305,8 +305,8 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
 
     //Refine Net
     private fun RNet(
-            bitmap: Bitmap,
-            boxes: Vector<Box>
+        bitmap: Bitmap,
+        boxes: Vector<Box>
     ): Vector<Box> { //RNet Input Init
         val num = boxes.size
         val RNetIn = FloatArray(num * 24 * 24 * 3)
@@ -331,8 +331,8 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
      * ONet跑神经网络，将score和bias写入boxes
      */
     private fun ONetForward(
-            ONetIn: FloatArray,
-            boxes: Vector<Box>
+        ONetIn: FloatArray,
+        boxes: Vector<Box>
     ) {
         val num = ONetIn.size / 48 / 48 / 3
         //feed & run
@@ -357,9 +357,9 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
             //landmark
             for (j in 0..4) {
                 val x =
-                        boxes[i].left() + (ONetL[i * 10 + j] * boxes[i].width()).toInt()
+                    boxes[i].left() + (ONetL[i * 10 + j] * boxes[i].width()).toInt()
                 val y =
-                        boxes[i].top() + (ONetL[i * 10 + j + 5] * boxes[i].height()).toInt()
+                    boxes[i].top() + (ONetL[i * 10 + j + 5] * boxes[i].height()).toInt()
                 boxes[i].landmark[j] = Point(x, y)
             }
         }
@@ -367,8 +367,8 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
 
     //ONet
     private fun ONet(
-            bitmap: Bitmap,
-            boxes: Vector<Box>
+        bitmap: Bitmap,
+        boxes: Vector<Box>
     ): Vector<Box> { //ONet Input Init
         val num = boxes.size
         val ONetIn = FloatArray(num * 48 * 48 * 3)
@@ -390,9 +390,9 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
     }
 
     private fun square_limit(
-            boxes: Vector<Box>,
-            w: Int,
-            h: Int
+        boxes: Vector<Box>,
+        w: Int,
+        h: Int
     ) { //square
         for (i in boxes.indices) {
             boxes[i].toSquareShape()
@@ -411,7 +411,9 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
     fun detectFacesAsync(bitmap: Bitmap, minFaceSize: Int): Task<Vector<Box>?> {
         return try {
             val bitmapCopy = bitmap.copy(Bitmap.Config.ARGB_8888, true)
-            Tasks.call(executorService, Callable<Vector<Box>> { detectFaces(bitmapCopy, minFaceSize) })
+            Tasks.call(
+                executorService,
+                Callable<Vector<Box>> { detectFaces(bitmapCopy, minFaceSize) })
         } catch (e: Exception) {
             Tasks.call(executorService, Callable<Vector<Box>> { detectFaces(null, minFaceSize) })
         }
@@ -444,15 +446,15 @@ class MTCNN internal constructor(private val assetManager: AssetManager) {
         //tensor name
         private const val PNetInName = "pnet/input:0"
         private val PNetOutName =
-                arrayOf("pnet/prob1:0", "pnet/conv4-2/BiasAdd:0")
+            arrayOf("pnet/prob1:0", "pnet/conv4-2/BiasAdd:0")
         private const val RNetInName = "rnet/input:0"
         private val RNetOutName =
-                arrayOf("rnet/prob1:0", "rnet/conv5-2/conv5-2:0")
+            arrayOf("rnet/prob1:0", "rnet/conv5-2/conv5-2:0")
         private const val ONetInName = "onet/input:0"
         private val ONetOutName = arrayOf(
-                "onet/prob1:0",
-                "onet/conv6-2/conv6-2:0",
-                "onet/conv6-3/conv6-3:0"
+            "onet/prob1:0",
+            "onet/conv6-2/conv6-2:0",
+            "onet/conv6-3/conv6-3:0"
         )
         private const val TAG = "MTCNN"
     }

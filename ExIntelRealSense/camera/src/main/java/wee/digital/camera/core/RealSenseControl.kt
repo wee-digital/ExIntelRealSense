@@ -129,7 +129,7 @@ class RealSenseControl {
     }
 
     init {
-        mHandlerThread = HandlerThread("streaming")?.also {
+        mHandlerThread = HandlerThread("streaming").also {
             it.start()
             mHandler = Handler(it.looper)
         }
@@ -142,8 +142,22 @@ class RealSenseControl {
         if (isStreaming) return
         try {
             val config = Config().apply {
-                enableStream(StreamType.COLOR, 0, COLOR_WIDTH, COLOR_HEIGHT, StreamFormat.RGB8, FRAME_RATE)
-                enableStream(StreamType.DEPTH, 0, DEPTH_WIDTH, DEPTH_HEIGHT, StreamFormat.Z16, FRAME_RATE)
+                enableStream(
+                    StreamType.COLOR,
+                    0,
+                    COLOR_WIDTH,
+                    COLOR_HEIGHT,
+                    StreamFormat.RGB8,
+                    FRAME_RATE
+                )
+                enableStream(
+                    StreamType.DEPTH,
+                    0,
+                    DEPTH_WIDTH,
+                    DEPTH_HEIGHT,
+                    StreamFormat.Z16,
+                    FRAME_RATE
+                )
             }
             pipeline = Pipeline()
             pipelineProfile = pipeline?.start(config)?.apply {

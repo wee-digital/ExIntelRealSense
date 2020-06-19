@@ -16,14 +16,14 @@ class ModelFilter(fileName: String) {
     init {
         try {
             val model = FirebaseAutoMLLocalModel.Builder()
-                    .setAssetFilePath(fileName)
-                    .build()
+                .setAssetFilePath(fileName)
+                .build()
             val options =
-                    FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(model)
-                            .setConfidenceThreshold(0.5f)
-                            .build()
+                FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(model)
+                    .setConfidenceThreshold(0.5f)
+                    .build()
             imageLabeler = FirebaseVision.getInstance()
-                    .getOnDeviceAutoMLImageLabeler(options)
+                .getOnDeviceAutoMLImageLabeler(options)
         } catch (e: Exception) {
         }
     }
@@ -41,14 +41,14 @@ class ModelFilter(fileName: String) {
         try {
             val image = FirebaseVisionImage.fromBitmap(bitmap)
             imageLabeler?.processImage(image)
-                    ?.addOnSuccessListener {
-                        val label = it.firstOrNull()
-                        onResult(label?.text, label?.confidence ?: 100f)
-                        isChecking = false
-                    }
-                    ?.addOnFailureListener {
-                        isChecking = false
-                    }
+                ?.addOnSuccessListener {
+                    val label = it.firstOrNull()
+                    onResult(label?.text, label?.confidence ?: 100f)
+                    isChecking = false
+                }
+                ?.addOnFailureListener {
+                    isChecking = false
+                }
 
         } catch (e: Exception) {
             isChecking = false

@@ -128,7 +128,7 @@ class FaceDetector {
      */
     private fun onGetPortrait(boxRect: Rect, bitmap: Bitmap) {
         boxRect.cropPortrait(bitmap)?.also {
-            statusListener?.onPortraitImage(bitmap,it)
+            statusListener?.onPortraitImage(bitmap, it)
         }
     }
 
