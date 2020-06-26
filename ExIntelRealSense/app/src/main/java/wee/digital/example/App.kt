@@ -15,4 +15,9 @@ class App : Application() {
         RealSense.app = this
     }
 
+    override fun onTerminate() {
+        super.onTerminate()
+        RealSense.stop()
+    }
+
 }

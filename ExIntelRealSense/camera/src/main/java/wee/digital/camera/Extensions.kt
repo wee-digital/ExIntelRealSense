@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import wee.digital.camera.core.Box
+import wee.digital.camera.detector.Box
 import java.io.ByteArrayOutputStream
 import java.util.*
 import kotlin.math.*
@@ -346,9 +346,21 @@ fun distancePoint(p1: PointF, p2: PointF): Float {
     return dist.toFloat()
 }
 
-/**
- * Image utils
- */
+fun ByteArray?.toBitmap(width: Int, height: Int): Bitmap? {
+    this ?: return null
+    return try {
+        val argb = this.rgb8ToArgb(width, height) ?: return null
+        val bmp = Bitmap.createBitmap(argb, width, height, Bitmap.Config.RGB_565)
+        return bmp.flipHorizontal()
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    } catch (e: Throwable) {
+        e.printStackTrace()
+        null
+    }
+}
+
 fun com.intel.realsense.librealsense.Frame?.getBitmap(size: Int, width: Int, height: Int): Bitmap? {
     this ?: return null
     return try {
@@ -365,22 +377,6 @@ fun com.intel.realsense.librealsense.Frame?.getBitmap(size: Int, width: Int, hei
         null
     }
 }
-/*
-fun com.intel.realsense.librealsense.Frame?.getBitmap(width: Int, height: Int): Bitmap? {
-    this ?: return null
-    return try {
-        val data = ByteArray(width * height)
-        this.getData(data)
-        val argb = data.rgb8ToArgb(width, height) ?: return null
-        val bmp = Bitmap.createBitmap(argb, width, height, Bitmap.Config.RGB_565)
-        return bmp.flipHorizontal()
-    } catch (e: OutOfMemoryError) {
-        null
-    } catch (e: Exception) {
-        null
-    }
-}
-*/
 
 fun Bitmap.flipHorizontal(): Bitmap? {
     return try {
@@ -418,7 +414,6 @@ fun ByteArray.rgb8ToArgb(width: Int, height: Int): IntArray? {
                 val B = this[3 * index].toInt()
                 val G = this[3 * index + 1].toInt()
                 val R = this[3 * index + 2].toInt()
-                rgb[index] = (R and 0xff) or (G and 0xff shl 8) or (B and 0xff shl 16)
                 rgb[index] = (R and 0xff) or (G and 0xff shl 8) or (B and 0xff shl 16)
                 index++
             }

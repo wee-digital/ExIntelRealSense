@@ -10,8 +10,7 @@ import kotlinx.android.synthetic.main.motion.*
 import wee.digital.example.R
 
 class MotionFragment : Fragment(),
-    MotionLayout.TransitionListener,
-    MotionJob.Listener {
+    MotionLayout.TransitionListener {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,15 +44,7 @@ class MotionFragment : Fragment(),
         }
     }
 
-    /**
-     * [MotionJob.Listener] implement
-     */
 
-    override fun onFaceDetected(raw: ByteArray) {
-    }
-
-    override fun onFaceLeaved() {
-    }
 
 
 }

@@ -6,19 +6,29 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.intel.realsense.librealsense.RsContext
-import wee.digital.camera.core.RealSenseControl
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.observers.DisposableObserver
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 object RealSense {
 
-    const val VENDOR_ID: Int = 32902
-    const val PRODUCT_ID: Int = 2888
-    private const val PERMISSION = ".USB_PERMISSION"
+    init {
+        System.loadLibrary("real_sense")
+    }
 
+    /**
+     * Application
+     */
     private var mApp: Application? = null
 
     var app: Application
@@ -32,40 +42,25 @@ object RealSense {
         }
 
     /**
-     * Callback when [RealSenseControl] device control initialized or reinitialized
+     * Log
      */
-    val controlLiveData = MutableLiveData<RealSenseControl?>()
+    private const val TAG = "HeroFun"
 
-    var listener: RealSenseControl.Listener?
-        get() = controlLiveData.value?.listener
-        set(value) {
-            controlLiveData.value?.listener = value
-        }
-
-    fun start() {
-        Thread {
-            RealSenseControl().also {
-                Thread.sleep(2400)
-                it.onCreate()
-                controlLiveData.postValue(it)
-            }
-        }.start()
+    fun d(s: Any?) {
+        if (BuildConfig.DEBUG) Log.d(TAG, s.toString())
     }
 
-    fun stop() {
-        Thread {
-            controlLiveData.value?.onPause()
-        }.start()
-        controlLiveData.postValue(null)
-    }
-
-    fun hasFace() {
-        controlLiveData.value?.hasFace()
+    fun d(e: Throwable) {
+        if (BuildConfig.DEBUG) Log.e(TAG, e.message)
     }
 
     /**
      * Usb util
      */
+    const val VENDOR_ID: Int = 32902
+
+    private const val PERMISSION = ".USB_PERMISSION"
+
     @JvmStatic
     val usbManager: UsbManager
         get() = app.getSystemService(Context.USB_SERVICE) as UsbManager
@@ -146,6 +141,111 @@ object RealSense {
         return usbManager.hasPermission(usb)
     }
 
+    /**
+     * [RealSenseControl]
+     */
+    private var realSenseControl: RealSenseControl? = null
+
+    val imagesLiveData: MutableLiveData<Pair<Bitmap, Bitmap>?> by lazy {
+        MutableLiveData<Pair<Bitmap, Bitmap>?>()
+    }
+
+    /**
+     * Native
+     */
+    external fun nVersion(): String
+
+    external fun nStart()
+
+    external fun nStop()
+
+    external fun nWaitForFrames(colorRaw: ByteArray, depthRaw: ByteArray)
+
+
+    /**
+     * Native wrapper
+     */
+    private var frameObservable: Disposable? = null
+
+    val imageLiveData: MutableLiveData<Bitmap?> by lazy {
+        MutableLiveData<Bitmap?>()
+    }
+
+    val frames: Bitmap?
+        get() {
+            val colorRaw = ByteArray(RealSenseControl.COLOR_SIZE)
+            val depthRaw = ByteArray(RealSenseControl.DEPTH_SIZE)
+            nWaitForFrames(colorRaw, depthRaw)
+            return colorRaw.toBitmap(RealSenseControl.COLOR_WIDTH, RealSenseControl.COLOR_HEIGHT)
+        }
+
+    fun start() {
+        nStart()
+        /*Thread {
+            realSenseControl = RealSenseControl().also {
+                Thread.sleep(2400)
+                it.onCreate()
+            }
+        }.start()*/
+    }
+
+    fun stop() {
+        pauseStream()
+        nStop()
+        //realSenseControl?.onPause()
+    }
+
+    fun startStream() {
+        frameObservable?.dispose()
+        frameObservable = Observable
+            .interval(0, 80, TimeUnit.MILLISECONDS)
+            .map { frames }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(object : DisposableObserver<Bitmap>() {
+                override fun onNext(it: Bitmap) {
+                    imageLiveData.value = it
+                }
+
+                override fun onComplete() {
+                }
+
+                override fun onError(e: Throwable) {
+                }
+            })
+    }
+
+    fun pauseStream() {
+        frameObservable?.dispose()
+        imagesLiveData.postValue(null)
+    }
+
+    val framesBytes: ByteArray?
+        get() {
+            val colorRaw = ByteArray(RealSenseControl.COLOR_SIZE)
+            val depthRaw = ByteArray(RealSenseControl.DEPTH_SIZE)
+            nWaitForFrames(colorRaw, depthRaw)
+            return colorRaw
+        }
+
+    fun capture(block: (ByteArray?) -> Unit) {
+        Observable
+            .fromCallable { framesBytes }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeWith(object : DisposableObserver<ByteArray>() {
+                override fun onNext(it: ByteArray) {
+                    block(it)
+                }
+
+                override fun onComplete() {
+                }
+
+                override fun onError(e: Throwable) {
+                    block(null)
+                }
+            })
+    }
 }
 
 

@@ -4,9 +4,6 @@ import android.graphics.Bitmap
 import android.graphics.PointF
 import android.graphics.Rect
 import wee.digital.camera.*
-import wee.digital.camera.core.Box
-import wee.digital.camera.core.MTCNN
-import wee.digital.camera.core.ModelFilter
 
 class FaceDetector {
 
@@ -21,7 +18,7 @@ class FaceDetector {
 
     private var mtcnn: MTCNN = MTCNN(RealSense.app.assets)
 
-    private var mCurFace: Box? = null
+    private var currentFace: Box? = null
 
     private var isDetecting: Boolean = false
 
@@ -36,8 +33,8 @@ class FaceDetector {
         maskFilter.initModel()
     }
 
-    fun start() {
-        mCurFace = null
+    fun release() {
+        currentFace = null
     }
 
     fun detectFace(colorBitmap: Bitmap, depthBitmap: Bitmap) {
@@ -118,9 +115,7 @@ class FaceDetector {
             if (optionListener.onDepthLabel(text, confidence)) {
                 onGetPortrait(boxRect, colorBitmap)
             }
-
         }
-
     }
 
     /**
@@ -128,25 +123,25 @@ class FaceDetector {
      */
     private fun onGetPortrait(boxRect: Rect, bitmap: Bitmap) {
         boxRect.cropPortrait(bitmap)?.also {
-            statusListener?.onPortraitImage(bitmap, it)
+            dataListener?.onPortraitImage(it)
         }
     }
 
     private fun faceChangeProcess(face: Box): Boolean {
-        if (mCurFace == null) {
-            mCurFace = face
+        if (currentFace == null) {
+            currentFace = face
             return false
         }
         val nowRect = face.transformToRect()
         val nowCenterX = nowRect.exactCenterX()
         val nowCenterY = nowRect.exactCenterY()
         val nowCenterPoint = PointF(nowCenterX, nowCenterY)
-        val curRect = mCurFace!!.transformToRect()
+        val curRect = currentFace!!.transformToRect()
         val curCenterX = curRect.exactCenterX()
         val curCenterY = curRect.exactCenterY()
         val curCenterPoint = PointF(curCenterX, curCenterY)
         val dist = distancePoint(nowCenterPoint, curCenterPoint)
-        mCurFace = face
+        currentFace = face
         return dist < MIN_DISTANCE
     }
 
@@ -156,15 +151,11 @@ class FaceDetector {
      */
     interface DataListener {
 
-        fun onFullColorImage(bitmap: Bitmap)
+        fun onFaceColorImage(bitmap: Bitmap?) {}
 
-        fun onFullDepthImage(bitmap: Bitmap)
+        fun onFaceDepthImage(bitmap: Bitmap?) {}
 
-        fun onFaceColorImage(bitmap: Bitmap?)
-
-        fun onFaceDepthImage(bitmap: Bitmap?)
-
-
+        fun onPortraitImage(bitmap: Bitmap)
     }
 
     /**
@@ -172,13 +163,11 @@ class FaceDetector {
      */
     interface StatusListener {
 
-        fun onPortraitImage(image: Bitmap, portrait: Bitmap)
-
         fun onFacePerformed()
 
         fun onFaceLeaved()
 
-        fun onFaceChanged()
+        fun onFaceChanged() {}
 
     }
 

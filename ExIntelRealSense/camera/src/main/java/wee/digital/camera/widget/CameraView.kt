@@ -7,12 +7,14 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.widget_camera_view.view.*
 import wee.digital.camera.R
-import wee.digital.camera.core.RealSenseControl
-import wee.digital.camera.job.DebugJob
+import wee.digital.camera.RealSense
+import wee.digital.camera.RealSenseControl
 
-class CameraView : ConstraintLayout, DebugJob.UiListener {
+class CameraView : ConstraintLayout {
 
     constructor(context: Context) : super(context) {
         onViewInit(context)
@@ -34,75 +36,21 @@ class CameraView : ConstraintLayout, DebugJob.UiListener {
         LayoutInflater.from(context).inflate(R.layout.widget_camera_view, this)
     }
 
-
-    /**
-     * [DebugJob.UiListener] implement
-     */
-    override fun onFaceScore(score: Float): Boolean {
-        textViewScore.text = score.toString()
-        return true
+    fun observe(lifecycleOwner: LifecycleOwner) {
+        RealSense.imagesLiveData.observe(lifecycleOwner, Observer<Pair<Bitmap, Bitmap>?> {
+            it?.apply {
+                imageViewColor.setBitmap(first)
+                imageViewDepth.setImageBitmap(second)
+            }
+        })
     }
 
-    override fun onFaceRect(left: Int, top: Int, width: Int, height: Int): Boolean {
-        textViewLeft.text = left.toString()
-        textViewTop.text = top.toString()
-        textViewWidth.text = width.toString()
-        textViewHeight.text = height.toString()
-        censoredFace(left, top, width, height)
-        return true
-    }
-
-    override fun onFaceDegrees(x: Double, y: Double): Boolean {
-        textViewDegrees.text = "x %.2f,  y %.2f".format(x, y)
-        return true
-    }
-
-    override fun onMaskLabel(label: String, confidence: Float): Boolean {
-        textViewMaskLabel.text = label
-        return true
-    }
-
-    override fun onDepthLabel(label: String, confidence: Float): Boolean {
-        textViewDepthLabel.text = label
-        return true
-    }
-
-    override fun onFullColorImage(bitmap: Bitmap) {
-        imageViewPreview.setBitmap(bitmap)
-    }
-
-    override fun onFullDepthImage(bitmap: Bitmap) {
-        imageViewDepth.setImageBitmap(bitmap)
-    }
-
-    override fun onFaceColorImage(bitmap: Bitmap?) {
-        imageViewCropColor.setImageBitmap(bitmap)
-    }
-
-    override fun onFaceDepthImage(bitmap: Bitmap?) {
-        imageViewCropDepth.setImageBitmap(bitmap)
-    }
-
-    override fun onPortraitImage(image: Bitmap, portrait: Bitmap) {
-        imageViewPortrait?.setImageBitmap(portrait)
-    }
-
-    override fun onFaceLeaved() {
-        imageViewCensored.visibility = View.INVISIBLE
-        textViewFaceStatus.text = "Leaved"
-    }
-
-    override fun onFaceChanged() {
-        textViewFaceStatus.text = "Changed"
-    }
-
-    override fun onFacePerformed() {
+    fun targetFace(left: Int, top: Int = 0, width: Int = 0, height: Int = 0) {
+        if (left < 0) {
+            imageViewCensored.visibility = View.INVISIBLE
+            return
+        }
         imageViewCensored.visibility = View.VISIBLE
-        textViewFaceStatus.text = "Performed"
-    }
-
-    private fun censoredFace(left: Int, top: Int, width: Int, height: Int) {
-
         val set = ConstraintSet()
         set.clone(viewPreview)
         set.connect(
@@ -136,6 +84,5 @@ class CameraView : ConstraintLayout, DebugJob.UiListener {
         )
         set.applyTo(viewPreview)
     }
-
 
 }

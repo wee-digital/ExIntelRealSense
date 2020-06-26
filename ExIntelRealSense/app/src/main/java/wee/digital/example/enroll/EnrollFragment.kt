@@ -7,17 +7,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.enroll.*
-import wee.digital.camera.RealSenseLiveData
+import wee.digital.camera.job.FaceDetectJob
 import wee.digital.camera.replaceFragment
 import wee.digital.example.R
 import wee.digital.example.member.PortraitFragment
 
 class EnrollFragment : Fragment(),
-    EnrollJob.Listener {
+    FaceDetectJob.Listener {
 
-    private val faceAuthJob: EnrollJob = EnrollJob(this)
+    private val faceAuthJob: FaceDetectJob = FaceDetectJob(this)
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,14 +37,17 @@ class EnrollFragment : Fragment(),
     }
 
     /**
-     * [EnrollJob.Listener] implement
+     * [FaceDetectJob.Listener] implement
      */
-    override fun onFaceDetected(image: Bitmap, portrait: Bitmap) {
-        onEnrollRequest(portrait)
+    override fun onFaceDetected(bitmap: Bitmap) {
+        onEnrollRequest(bitmap)
     }
 
     override fun onFaceLeaved() {
         disposeEnrollRequest()
+    }
+
+    override fun onFaceInvalid(message: String?) {
     }
 
     /**
@@ -53,9 +55,6 @@ class EnrollFragment : Fragment(),
      */
     private fun onStartFaceDetect() {
         faceAuthJob.observe(this)
-        RealSenseLiveData.instance.observe(this, Observer {
-            imageViewPreview?.setBitmap(it)
-        })
     }
 
 

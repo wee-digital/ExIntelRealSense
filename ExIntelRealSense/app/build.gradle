@@ -17,6 +17,8 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
+        flavorDimensions "default"
+        multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
         }
@@ -28,20 +30,18 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
     dexOptions {
+
         javaMaxHeapSize "4g"
         sourceSets {
             main {
                 jniLibs.srcDirs = ["libs"]
             }
-        }
-
-        packagingOptions {
-            exclude "META-INF/androidx.exifinterface_exifinterface.version"
-            exclude "META-INF/proguard/androidx-annotations.pro"
-            exclude 'META-INF/license.text'
-            exclude 'META-INF/notice.text'
-            exclude 'META-INF/ASL2.0'
         }
 
         dexOptions {
@@ -55,16 +55,17 @@ android {
         kotlinOptions {
             jvmTarget = "1.8"
         }
+        
     }
+
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation "androidx.multidex:multidex:2.0.1"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta6'
     implementation "com.github.bumptech.glide:glide:4.11.0"
-    kapt "com.github.bumptech.glide:compiler:4.11.0"
     implementation project(":camera")
 }
+
