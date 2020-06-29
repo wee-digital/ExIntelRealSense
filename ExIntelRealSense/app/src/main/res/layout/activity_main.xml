@@ -7,7 +7,7 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayoutCompat2"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -46,15 +46,28 @@
         android:id="@+id/imageViewCapture"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:background="@android:color/black"
         app:layout_constraintDimensionRatio="h,1280:720"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewTemp"
+        android:layout_width="200dp"
+        android:layout_height="0dp"
+        android:layout_margin="5dp"
+        android:background="@android:color/black"
+        app:layout_constraintDimensionRatio="h,1280:720"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewCapture" />
+
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textViewTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:text="..."
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewCapture" />
@@ -70,31 +83,31 @@
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewDebug"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:text="Face detect debug" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewEnroll"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:text="Enroll on click" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewAutoEnroll"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:text="Auto enroll" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewMotionEnroll"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:text="Motion enroll" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewCapturePortrait"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="60dp"
             android:text="Capture a portrait" />
 
 
@@ -107,7 +120,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewCapture" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

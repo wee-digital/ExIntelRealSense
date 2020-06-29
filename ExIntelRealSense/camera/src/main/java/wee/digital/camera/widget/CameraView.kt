@@ -1,18 +1,15 @@
 package wee.digital.camera.widget
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.widget_camera_view.view.*
 import wee.digital.camera.R
 import wee.digital.camera.RealSense
-import wee.digital.camera.RealSenseControl
 
 class CameraView : ConstraintLayout {
 
@@ -37,12 +34,6 @@ class CameraView : ConstraintLayout {
     }
 
     fun observe(lifecycleOwner: LifecycleOwner) {
-        RealSense.imagesLiveData.observe(lifecycleOwner, Observer<Pair<Bitmap, Bitmap>?> {
-            it?.apply {
-                imageViewColor.setBitmap(first)
-                imageViewDepth.setImageBitmap(second)
-            }
-        })
     }
 
     fun targetFace(left: Int, top: Int = 0, width: Int = 0, height: Int = 0) {
@@ -58,14 +49,14 @@ class CameraView : ConstraintLayout {
             ConstraintSet.START,
             ConstraintSet.PARENT_ID,
             ConstraintSet.START,
-            viewPreview.width * left / RealSenseControl.COLOR_WIDTH
+            viewPreview.width * left / RealSense.COLOR_WIDTH
         )
         set.connect(
             imageViewCensored.id,
             ConstraintSet.END,
             ConstraintSet.PARENT_ID,
             ConstraintSet.END,
-            viewPreview.width - (viewPreview.width * (left + width) / RealSenseControl.COLOR_WIDTH)
+                viewPreview.width - (viewPreview.width * (left + width) / RealSense.COLOR_WIDTH)
         )
 
         set.connect(
@@ -73,14 +64,14 @@ class CameraView : ConstraintLayout {
             ConstraintSet.TOP,
             ConstraintSet.PARENT_ID,
             ConstraintSet.TOP,
-            viewPreview.height * top / RealSenseControl.COLOR_HEIGHT
+                viewPreview.height * top / RealSense.COLOR_HEIGHT
         )
         set.connect(
             imageViewCensored.id,
             ConstraintSet.BOTTOM,
             ConstraintSet.PARENT_ID,
             ConstraintSet.BOTTOM,
-            viewPreview.height - (viewPreview.height * (top + height) / RealSenseControl.COLOR_HEIGHT)
+                viewPreview.height - (viewPreview.height * (top + height) / RealSense.COLOR_HEIGHT)
         )
         set.applyTo(viewPreview)
     }

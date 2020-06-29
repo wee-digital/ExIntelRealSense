@@ -4,7 +4,6 @@ import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.*
-import wee.digital.camera.RealSense
 import wee.digital.camera.detector.FaceDetector
 
 /**
@@ -32,7 +31,7 @@ class DebugDetectJob(private var uiListener: UiListener) :
 
     fun observe(lifecycleOwner: LifecycleOwner) {
         detector.release()
-        RealSense.imagesLiveData.observe(lifecycleOwner, imagesObserver)
+        //RealSense.imagesLiveData.observe(lifecycleOwner, imagesObserver)
         lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             fun destroy() {

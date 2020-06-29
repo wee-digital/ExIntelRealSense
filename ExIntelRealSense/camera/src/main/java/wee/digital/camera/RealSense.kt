@@ -142,109 +142,91 @@ object RealSense {
     }
 
     /**
-     * [RealSenseControl]
-     */
-    private var realSenseControl: RealSenseControl? = null
-
-    val imagesLiveData: MutableLiveData<Pair<Bitmap, Bitmap>?> by lazy {
-        MutableLiveData<Pair<Bitmap, Bitmap>?>()
-    }
-
-    /**
      * Native
      */
-    external fun nVersion(): String
+    private external fun nStart()
 
-    external fun nStart()
+    private external fun nStop()
 
-    external fun nStop()
-
-    external fun nWaitForFrames(colorRaw: ByteArray, depthRaw: ByteArray)
+    private external fun nWaitForFrames(raw: ByteArray)
 
 
     /**
      * Native wrapper
      */
+    const val COLOR_WIDTH = 1280
+    const val COLOR_HEIGHT = 720
+    const val COLOR_SIZE = COLOR_WIDTH * COLOR_HEIGHT * 3
+
+    const val DEPTH_WIDTH = 640
+    const val DEPTH_HEIGHT = 480
+    const val DEPTH_SIZE = DEPTH_WIDTH * DEPTH_HEIGHT * 3
+
     private var frameObservable: Disposable? = null
 
     val imageLiveData: MutableLiveData<Bitmap?> by lazy {
         MutableLiveData<Bitmap?>()
     }
 
-    val frames: Bitmap?
+    val colorFrame: ByteArray?
         get() {
-            val colorRaw = ByteArray(RealSenseControl.COLOR_SIZE)
-            val depthRaw = ByteArray(RealSenseControl.DEPTH_SIZE)
-            nWaitForFrames(colorRaw, depthRaw)
-            return colorRaw.toBitmap(RealSenseControl.COLOR_WIDTH, RealSenseControl.COLOR_HEIGHT)
+            val raw = ByteArray(COLOR_SIZE)
+            nWaitForFrames(raw)
+            return raw
         }
 
     fun start() {
         nStart()
-        /*Thread {
-            realSenseControl = RealSenseControl().also {
-                Thread.sleep(2400)
-                it.onCreate()
-            }
-        }.start()*/
     }
 
     fun stop() {
         pauseStream()
         nStop()
-        //realSenseControl?.onPause()
     }
 
     fun startStream() {
         frameObservable?.dispose()
         frameObservable = Observable
-            .interval(0, 80, TimeUnit.MILLISECONDS)
-            .map { frames }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableObserver<Bitmap>() {
-                override fun onNext(it: Bitmap) {
-                    imageLiveData.value = it
-                }
+                .interval(0, 80, TimeUnit.MILLISECONDS)
+                .map { Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565) }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableObserver<Bitmap>() {
+                    override fun onNext(it: Bitmap) {
+                        imageLiveData.value = it
+                    }
 
-                override fun onComplete() {
-                }
+                    override fun onComplete() {
+                    }
 
-                override fun onError(e: Throwable) {
-                }
-            })
+                    override fun onError(e: Throwable) {
+                    }
+                })
     }
 
     fun pauseStream() {
         frameObservable?.dispose()
-        imagesLiveData.postValue(null)
+        imageLiveData.postValue(null)
     }
 
-    val framesBytes: ByteArray?
-        get() {
-            val colorRaw = ByteArray(RealSenseControl.COLOR_SIZE)
-            val depthRaw = ByteArray(RealSenseControl.DEPTH_SIZE)
-            nWaitForFrames(colorRaw, depthRaw)
-            return colorRaw
-        }
 
     fun capture(block: (ByteArray?) -> Unit) {
         Observable
-            .fromCallable { framesBytes }
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableObserver<ByteArray>() {
-                override fun onNext(it: ByteArray) {
-                    block(it)
-                }
+                .fromCallable { colorFrame }
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeWith(object : DisposableObserver<ByteArray>() {
+                    override fun onNext(it: ByteArray) {
+                        block(it)
+                    }
 
-                override fun onComplete() {
-                }
+                    override fun onComplete() {
+                    }
 
-                override fun onError(e: Throwable) {
-                    block(null)
-                }
-            })
+                    override fun onError(e: Throwable) {
+                        block(null)
+                    }
+                })
     }
 }
 

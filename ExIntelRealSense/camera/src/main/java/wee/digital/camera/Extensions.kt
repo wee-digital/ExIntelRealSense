@@ -340,18 +340,47 @@ fun distancePoint(a: Point, b: Point): Float {
 
 fun distancePoint(p1: PointF, p2: PointF): Float {
     val dist = sqrt(
-        (p2.x - p1.x).toDouble().pow(2)
-                + (p2.y - p1.y).toDouble().pow(2)
+            (p2.x - p1.x).toDouble().pow(2)
+                    + (p2.y - p1.y).toDouble().pow(2)
     )
     return dist.toFloat()
 }
 
-fun ByteArray?.toBitmap(width: Int, height: Int): Bitmap? {
+/**
+ * Image utils
+ */
+fun ByteArray?.rgbToBitmap(width: Int): Bitmap? {
+    return this.rgbToArgb(width).argbToBitmap(width)
+}
+
+fun ByteArray?.rgbToArgb(width: Int): IntArray? {
+    this ?: return null
+    try {
+        val height = size / width / 3
+        val rgb = IntArray(size / 3)
+        var index = 0
+        for (j in 0 until height) {
+            for (i in 0 until width) {
+                val b = this[3 * index].toInt()
+                val g = this[3 * index + 1].toInt()
+                val r = this[3 * index + 2].toInt()
+                rgb[index] = (r and 0xff) or (g and 0xff shl 8) or (b and 0xff shl 16)
+                index++
+            }
+        }
+        return rgb
+    } catch (e: Exception) {
+        return null
+    }
+
+}
+
+fun IntArray?.argbToBitmap(width: Int): Bitmap? {
     this ?: return null
     return try {
-        val argb = this.rgb8ToArgb(width, height) ?: return null
-        val bmp = Bitmap.createBitmap(argb, width, height, Bitmap.Config.RGB_565)
-        return bmp.flipHorizontal()
+        val height = size / width
+        val bmp = Bitmap.createBitmap(this, width, height, Bitmap.Config.RGB_565)
+        return bmp
     } catch (e: Exception) {
         e.printStackTrace()
         null
@@ -361,23 +390,10 @@ fun ByteArray?.toBitmap(width: Int, height: Int): Bitmap? {
     }
 }
 
-fun com.intel.realsense.librealsense.Frame?.getBitmap(size: Int, width: Int, height: Int): Bitmap? {
-    this ?: return null
-    return try {
-        val data = ByteArray(size)
-        this.getData(data)
-        val argb = data.rgb8ToArgb(width, height) ?: return null
-        val bmp = Bitmap.createBitmap(argb, width, height, Bitmap.Config.RGB_565)
-        return bmp.flipHorizontal()
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    } catch (e: Throwable) {
-        e.printStackTrace()
-        null
-    }
-}
 
+/**
+ * Bitmap utils
+ */
 fun Bitmap.flipHorizontal(): Bitmap? {
     return try {
         val matrix = Matrix()
@@ -400,27 +416,6 @@ fun Bitmap?.toBytes(): ByteArray {
         byteArray
     } catch (e: Exception) {
         ByteArray(1)
-    }
-
-}
-
-fun ByteArray.rgb8ToArgb(width: Int, height: Int): IntArray? {
-    try {
-        val frameSize = width * height
-        val rgb = IntArray(frameSize)
-        var index = 0
-        for (j in 0 until height) {
-            for (i in 0 until width) {
-                val B = this[3 * index].toInt()
-                val G = this[3 * index + 1].toInt()
-                val R = this[3 * index + 2].toInt()
-                rgb[index] = (R and 0xff) or (G and 0xff shl 8) or (B and 0xff shl 16)
-                index++
-            }
-        }
-        return rgb
-    } catch (e: Exception) {
-        return null
     }
 
 }

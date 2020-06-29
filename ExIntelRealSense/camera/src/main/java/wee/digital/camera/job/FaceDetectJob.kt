@@ -2,8 +2,6 @@ package wee.digital.camera.job
 
 import android.graphics.Bitmap
 import androidx.lifecycle.*
-import wee.digital.camera.RealSense
-import wee.digital.camera.RealSenseControl
 import wee.digital.camera.detector.FaceDetector
 import wee.digital.camera.uiThread
 import java.util.concurrent.atomic.AtomicInteger
@@ -42,7 +40,7 @@ class FaceDetectJob(private var uiListener: Listener) :
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             fun destroy() {
                 pauseDetect()
-                RealSense.imagesLiveData.removeObserver(imagesObserver)
+                //RealSense.imagesLiveData.removeObserver(imagesObserver)
                 detector.destroy()
             }
         })
@@ -52,7 +50,7 @@ class FaceDetectJob(private var uiListener: Listener) :
         noneFaceCount.set(0)
         invalidFaceCount.set(0)
         hasDetect = true
-        RealSense.imagesLiveData.observeForever(imagesObserver)
+        // RealSense.imagesLiveData.observeForever(imagesObserver)
     }
 
     fun pauseDetect() {
