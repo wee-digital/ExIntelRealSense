@@ -1,1 +1,6 @@
 /build/
+/.idea
+/.gradle
+/.setting
+/camera/.cxx/cmake/debug/
+*.iml
