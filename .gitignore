@@ -1,2 +1,5 @@
-
-ExIntelRealSense/app/src/main/AndroidManifest.xml
+/build/
+/.idea
+/.gradle
+/.setting
+*.iml
