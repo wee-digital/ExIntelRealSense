@@ -62,36 +62,4 @@ dependencies {
     implementation 'org.tensorflow:tensorflow-android:1.13.1'
 }
 
-repositories {
-    maven {
-        url "https://dl.bintray.com/intel-realsense/librealsense"
-    }
-}
-
-configurations {
-    downloadHeader
-    downloadSo
-}
-
-dependencies {
-    def version = '2.34.0'
-    downloadSo 'com.intel.realsense:librealsense:' + version + '@aar'
-    implementation 'com.intel.realsense:librealsense:' + version + '@aar'
-    downloadHeader 'com.intel.realsense:librealsense:' + version + '@zip'
-}
-
-task extractHeaders(type: Sync) {
-    dependsOn configurations.downloadHeader
-    from { configurations.downloadHeader.collect { zipTree(it) } }
-    into "$projectDir/src/main/cpp/include"
-}
-
-task extractSo(type: Sync) {
-    dependsOn configurations.downloadSo
-    from { configurations.downloadSo.collect { zipTree(it) } }
-    include("jni/**")
-    into "$buildDir/"
-}
-
-preBuild.dependsOn(extractHeaders)
-preBuild.dependsOn(extractSo)
+apply from: "build_real_sense.gradle"

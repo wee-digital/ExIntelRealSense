@@ -14,6 +14,8 @@ import com.intel.realsense.librealsense.RsContext
 
 object RealSense {
 
+
+
     /**
      * Application
      */

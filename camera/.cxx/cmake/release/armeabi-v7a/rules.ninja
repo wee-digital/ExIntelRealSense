@@ -42,7 +42,7 @@ rule CXX_SHARED_LIBRARY_LINKER__real_sense
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /Users/huy/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake -H/Users/huy/Documents/Example/ExIntelRealSense/ExIntelRealSense/camera -B/Users/huy/Documents/Example/ExIntelRealSense/ExIntelRealSense/camera/.cxx/cmake/release/armeabi-v7a
+  command = /Users/huy/Library/Android/sdk/cmake/3.10.2.4988404/bin/cmake -H/Users/huy/Documents/Example/ExIntelRealSense/camera -B/Users/huy/Documents/Example/ExIntelRealSense/camera/.cxx/cmake/release/armeabi-v7a
   description = Re-running CMake...
   generator = 1
 
