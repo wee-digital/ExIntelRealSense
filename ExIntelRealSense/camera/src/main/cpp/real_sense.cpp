@@ -164,17 +164,11 @@ Java_wee_digital_camera_DepthSense_nWaitForFrame(JNIEnv *env, jobject, jbyteArra
     if (frameSetCount == 0) {
         return;
     }
-    frameSet.apply_filter(colorizer);
-    rs2::frame frame = frameSet.first(DEPTH_STREAM_TYPE, DEPTH_STREAM_FMT);
+    rs2::frame frame = frameSet.apply_filter(colorizer);
     if (NULL == frame) {
         return;
     }
-
     jsize length = env->GetArrayLength(raw);
     auto frameData = frame.get_data();
     env->SetByteArrayRegion(raw, 0, length, static_cast<const jbyte *>(frameData));
-
-
-
-    printf("hello");
 }
