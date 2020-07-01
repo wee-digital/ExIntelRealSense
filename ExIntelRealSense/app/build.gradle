@@ -17,8 +17,6 @@ android {
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
-        flavorDimensions "default"
-        multiDexEnabled true
         ndk {
             abiFilters "armeabi-v7a"
         }
@@ -47,15 +45,6 @@ android {
         dexOptions {
             javaMaxHeapSize "4g"
         }
-
-        aaptOptions {
-            noCompress "tflite"
-        }
-
-        kotlinOptions {
-            jvmTarget = "1.8"
-        }
-        
     }
 
 }

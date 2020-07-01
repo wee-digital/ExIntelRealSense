@@ -8,8 +8,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import androidx.lifecycle.LifecycleOwner
 import kotlinx.android.synthetic.main.widget_camera_view.view.*
+import wee.digital.camera.ColorSense
 import wee.digital.camera.R
-import wee.digital.camera.RealSense
 
 class CameraView : ConstraintLayout {
 
@@ -49,14 +49,14 @@ class CameraView : ConstraintLayout {
             ConstraintSet.START,
             ConstraintSet.PARENT_ID,
             ConstraintSet.START,
-            viewPreview.width * left / RealSense.COLOR_WIDTH
+                viewPreview.width * left / ColorSense.WIDTH
         )
         set.connect(
             imageViewCensored.id,
             ConstraintSet.END,
             ConstraintSet.PARENT_ID,
             ConstraintSet.END,
-                viewPreview.width - (viewPreview.width * (left + width) / RealSense.COLOR_WIDTH)
+                viewPreview.width - (viewPreview.width * (left + width) / ColorSense.WIDTH)
         )
 
         set.connect(
@@ -64,14 +64,14 @@ class CameraView : ConstraintLayout {
             ConstraintSet.TOP,
             ConstraintSet.PARENT_ID,
             ConstraintSet.TOP,
-                viewPreview.height * top / RealSense.COLOR_HEIGHT
+                viewPreview.height * top / ColorSense.HEIGHT
         )
         set.connect(
             imageViewCensored.id,
             ConstraintSet.BOTTOM,
             ConstraintSet.PARENT_ID,
             ConstraintSet.BOTTOM,
-                viewPreview.height - (viewPreview.height * (top + height) / RealSense.COLOR_HEIGHT)
+                viewPreview.height - (viewPreview.height * (top + height) / ColorSense.HEIGHT)
         )
         set.applyTo(viewPreview)
     }

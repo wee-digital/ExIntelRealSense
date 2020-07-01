@@ -349,60 +349,40 @@ fun distancePoint(p1: PointF, p2: PointF): Float {
 /**
  * Image utils
  */
-fun ByteArray?.rgbToBitmap(width: Int): Bitmap? {
-    return this.rgbToArgb(width).argbToBitmap(width)
-}
-
-fun ByteArray?.rgbToArgb(width: Int): IntArray? {
+fun ByteArray?.rgbToArgb(w: Int): IntArray? {
     this ?: return null
-    try {
-        val height = size / width / 3
-        val rgb = IntArray(size / 3)
-        var index = 0
-        for (j in 0 until height) {
-            for (i in 0 until width) {
-                val b = this[3 * index].toInt()
-                val g = this[3 * index + 1].toInt()
-                val r = this[3 * index + 2].toInt()
-                rgb[index] = (r and 0xff) or (g and 0xff shl 8) or (b and 0xff shl 16)
-                index++
+    return try {
+        val h = size / w / 3
+        val rgb = IntArray(w * h)
+        for (y in 0 until h) {
+            for (x in 0 until w) {
+                val index = x * h + y
+                val colorSpace = index * 3
+                val r = this[colorSpace + 2].toInt()
+                val g = this[colorSpace + 1].toInt()
+                val b = this[colorSpace].toInt()
+                val color = (r and 0xff) or (g and 0xff shl 8) or (b and 0xff shl 16)
+                rgb[index] = color
             }
         }
-        return rgb
+        rgb
     } catch (e: Exception) {
-        return null
+        null
     }
-
 }
 
-fun IntArray?.argbToBitmap(width: Int): Bitmap? {
+fun IntArray?.argbToBitmap(w: Int): Bitmap? {
     this ?: return null
+    val h = size / w
+    val bmp = Bitmap.createBitmap(this, w, h, Bitmap.Config.RGB_565)
     return try {
-        val height = size / width
-        val bmp = Bitmap.createBitmap(this, width, height, Bitmap.Config.RGB_565)
-        return bmp
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
+        // horizontal flip
+        val matrix = Matrix().apply { preScale(-1.0f, 1.0f) }
+        Bitmap.createBitmap(bmp, 0, 0, w, h, matrix, true)
     } catch (e: Throwable) {
-        e.printStackTrace()
         null
-    }
-}
-
-
-/**
- * Bitmap utils
- */
-fun Bitmap.flipHorizontal(): Bitmap? {
-    return try {
-        val matrix = Matrix()
-        matrix.preScale(-1.0f, 1.0f)
-        val fliped = Bitmap.createBitmap(this, 0, 0, this.width, this.height, matrix, true)
-        this.recycle()
-        fliped
-    } catch (e: Exception) {
-        null
+    } finally {
+        bmp.recycle()
     }
 }
 

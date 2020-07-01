@@ -5,45 +5,100 @@
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/linearLayoutCompat2"
+        android:id="@+id/linearLayoutCompat3"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewStart"
+            android:id="@+id/viewDepthStart"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Start" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewStop"
+            android:id="@+id/viewDepthStop"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Stop" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewCapture"
+            android:id="@+id/viewDepthCapture"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:text="Capture" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewFrames"
+            android:id="@+id/viewDepthStream"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="Frames" />
+            android:text="Stream" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewDepth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Depth"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat3"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/linearLayoutCompat2"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/textViewDepth"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewColorStart"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Start" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewColorStop"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Stop" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewColorCapture"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Capture" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewColorStream"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="Stream" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewColor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Color"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat2"
+        app:layout_constraintStart_toStartOf="@+id/fragmentContainer" />
+
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageViewCapture"
+        android:id="@+id/imageViewColor"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_margin="5dp"
@@ -54,29 +109,22 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageViewTemp"
+        android:id="@+id/imageViewDepth"
         android:layout_width="200dp"
         android:layout_height="0dp"
+        android:scaleType="centerCrop"
         android:layout_margin="5dp"
         android:background="@android:color/black"
-        app:layout_constraintDimensionRatio="h,1280:720"
+        app:layout_constraintDimensionRatio="h,640:480"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewCapture" />
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textViewTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="..."
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewCapture" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewColor" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayoutCompat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat2"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -113,14 +161,12 @@
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewCapture" />
-
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat2"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

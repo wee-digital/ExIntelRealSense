@@ -6,25 +6,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.graphics.Bitmap
 import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import android.util.Log
-import androidx.lifecycle.MutableLiveData
 import com.intel.realsense.librealsense.RsContext
-import io.reactivex.Observable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.Disposable
-import io.reactivex.observers.DisposableObserver
-import io.reactivex.schedulers.Schedulers
-import java.util.concurrent.TimeUnit
 
 object RealSense {
-
-    init {
-        System.loadLibrary("real_sense")
-    }
 
     /**
      * Application
@@ -44,7 +32,7 @@ object RealSense {
     /**
      * Log
      */
-    private const val TAG = "HeroFun"
+    private const val TAG = "RealSense"
 
     fun d(s: Any?) {
         if (BuildConfig.DEBUG) Log.d(TAG, s.toString())
@@ -141,93 +129,6 @@ object RealSense {
         return usbManager.hasPermission(usb)
     }
 
-    /**
-     * Native
-     */
-    private external fun nStart()
-
-    private external fun nStop()
-
-    private external fun nWaitForFrames(raw: ByteArray)
-
-
-    /**
-     * Native wrapper
-     */
-    const val COLOR_WIDTH = 1280
-    const val COLOR_HEIGHT = 720
-    const val COLOR_SIZE = COLOR_WIDTH * COLOR_HEIGHT * 3
-
-    const val DEPTH_WIDTH = 640
-    const val DEPTH_HEIGHT = 480
-    const val DEPTH_SIZE = DEPTH_WIDTH * DEPTH_HEIGHT * 3
-
-    private var frameObservable: Disposable? = null
-
-    val imageLiveData: MutableLiveData<Bitmap?> by lazy {
-        MutableLiveData<Bitmap?>()
-    }
-
-    val colorFrame: ByteArray?
-        get() {
-            val raw = ByteArray(COLOR_SIZE)
-            nWaitForFrames(raw)
-            return raw
-        }
-
-    fun start() {
-        nStart()
-    }
-
-    fun stop() {
-        pauseStream()
-        nStop()
-    }
-
-    fun startStream() {
-        frameObservable?.dispose()
-        frameObservable = Observable
-                .interval(0, 80, TimeUnit.MILLISECONDS)
-                .map { Bitmap.createBitmap(1, 1, Bitmap.Config.RGB_565) }
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableObserver<Bitmap>() {
-                    override fun onNext(it: Bitmap) {
-                        imageLiveData.value = it
-                    }
-
-                    override fun onComplete() {
-                    }
-
-                    override fun onError(e: Throwable) {
-                    }
-                })
-    }
-
-    fun pauseStream() {
-        frameObservable?.dispose()
-        imageLiveData.postValue(null)
-    }
-
-
-    fun capture(block: (ByteArray?) -> Unit) {
-        Observable
-                .fromCallable { colorFrame }
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableObserver<ByteArray>() {
-                    override fun onNext(it: ByteArray) {
-                        block(it)
-                    }
-
-                    override fun onComplete() {
-                    }
-
-                    override fun onError(e: Throwable) {
-                        block(null)
-                    }
-                })
-    }
 }
 
 

@@ -1,20 +1,17 @@
 package wee.digital.example
 
+import android.graphics.Color
 import android.os.Bundle
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_main.*
+import wee.digital.camera.ColorSense
+import wee.digital.camera.DepthSense
 import wee.digital.camera.RealSense
-import wee.digital.camera.argbToBitmap
 import wee.digital.camera.replaceFragment
-import wee.digital.camera.rgbToArgb
 import wee.digital.example.detect.FaceDetectFragment
 import wee.digital.example.enroll.EnrollFragment
-import java.io.BufferedReader
-import java.io.InputStreamReader
 
 
 class MainActivity : AppCompatActivity() {
@@ -23,11 +20,21 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        onClicksInit()
+
         RealSense.requestPermission {
         }
-        RealSense.imageLiveData.observe(this, Observer {
-            imageViewCapture.setImageBitmap(it)
+
+        ColorSense.liveData.observe(this, Observer {
+            imageViewColor.setImageBitmap(it)
         })
+
+        DepthSense.liveData.observe(this, Observer {
+            imageViewDepth.setImageBitmap(it)
+        })
+    }
+
+    private fun onClicksInit() {
 
         viewDebug.setOnClickListener {
             replaceFragment(FaceDetectFragment(), R.id.fragmentContainer, true)
@@ -45,55 +52,36 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "dev", Toast.LENGTH_SHORT).show()
         }
 
-        viewStart.setOnClickListener {
-            RealSense.start()
+
+        viewColorStart.setOnClickListener {
+            textViewColor.setTextColor(Color.GREEN)
+            ColorSense.initPipeline()
         }
-        viewStop.setOnClickListener {
-            RealSense.stop()
+        viewColorStop.setOnClickListener {
+            textViewColor.setTextColor(Color.DKGRAY)
+            ColorSense.stopPipeline()
         }
-
-        //val image = Base64.decode(readAsset("image.txt"), Base64.NO_WRAP)
-        viewCapture.setOnClickListener {
-            var t = System.currentTimeMillis()
-            RealSense.capture {
-                it ?: return@capture
-
-                textViewTime.text = "capture: ${System.currentTimeMillis() - t} ms - size: ${it.size}"
-
-                t = System.currentTimeMillis()
-                val argb = it.rgbToArgb(1280) ?: return@capture
-                textViewTime.append("\n\nrgbToArgb:  ${now - t} ms")
-
-                t = System.currentTimeMillis()
-                textViewTime.append("\n\nargbToBitmap:  ${now - t} ms")
-                val bmp = argb.argbToBitmap(1280) ?: return@capture
-
-                t = System.currentTimeMillis()
-                imageViewCapture.setImageBitmap(bmp)
-                textViewTime.append("\n\nsetImageBitmap:  ${now - t} ms")
-            }
+        viewColorCapture.setOnClickListener {
+            ColorSense.capture { imageViewColor.setImageBitmap(it) }
         }
-        viewFrames.setOnClickListener {
-            RealSense.startStream()
+        viewColorStream.setOnClickListener {
+            ColorSense.startStream()
         }
 
+
+        viewDepthStart.setOnClickListener {
+            textViewDepth.setTextColor(Color.GREEN)
+            DepthSense.initPipeline()
+        }
+        viewDepthStop.setOnClickListener {
+            textViewDepth.setTextColor(Color.DKGRAY)
+            DepthSense.stopPipeline()
+        }
+        viewDepthCapture.setOnClickListener {
+            DepthSense.capture { imageViewDepth.setImageBitmap(it) }
+        }
+        viewDepthStream.setOnClickListener {
+        }
     }
-
-    private fun ImageView.load(byteArray: ByteArray?) {
-        Glide.with(this).load(byteArray).into(this)
-    }
-
-    val now: Long get() = System.currentTimeMillis()
-
-    fun readAsset(filename: String): String {
-        val sb = StringBuilder()
-        BufferedReader(InputStreamReader(App.instance.assets.open(filename))).useLines { lines ->
-            lines.forEach {
-                sb.append(it)
-            }
-        }
-        return sb.toString()
-    }
-
 
 }

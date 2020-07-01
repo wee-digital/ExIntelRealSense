@@ -10,7 +10,10 @@ set_target_properties(
         ${CMAKE_CURRENT_SOURCE_DIR}/build/jni/${ANDROID_ABI}/librealsense2.so
 )
 
-add_library(real_sense SHARED src/main/cpp/real_sense.cpp)
+add_library(
+        real_sense SHARED src/main/cpp/real_sense.cpp
+)
+
 
 find_library(log-lib log)
 
