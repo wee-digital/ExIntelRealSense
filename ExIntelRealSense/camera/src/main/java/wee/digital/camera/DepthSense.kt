@@ -50,6 +50,7 @@ object DepthSense {
     }
 
     fun stopPipeline() {
+        stopStream()
         nStopPipeline()
     }
 
@@ -57,6 +58,8 @@ object DepthSense {
     }
 
     fun stopStream() {
+        imageObserver?.dispose()
+        liveData.postValue(null)
     }
 
     fun capture(block: (Bitmap?) -> Unit) {
