@@ -1,17 +1,14 @@
 package wee.digital.example
 
-import android.graphics.Color
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_main.*
-import wee.digital.camera.ColorSense
-import wee.digital.camera.DepthSense
+import wee.digital.camera.ColorSensor
+import wee.digital.camera.DepthSensor
 import wee.digital.camera.RealSense
 import wee.digital.camera.replaceFragment
-import wee.digital.example.detect.FaceDetectFragment
-import wee.digital.example.enroll.EnrollFragment
+import wee.digital.example.ui.AutoEnrollFragment
+import wee.digital.example.ui.DetectFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -19,71 +16,70 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         onClicksInit()
+        cameraView.observe(this)
+        RealSense.streamMemory { textViewMemory.text = it }
+    }
 
-        RealSense.requestPermission {
-        }
-
-        ColorSense.liveData.observe(this, Observer {
-            imageViewColor.setImageBitmap(it)
-        })
-
-        DepthSense.liveData.observe(this, Observer {
-            imageViewDepth.setImageBitmap(it)
-        })
+    override fun onDestroy() {
+        super.onDestroy()
+        RealSense.nReset()
     }
 
     private fun onClicksInit() {
 
-        viewDebug.setOnClickListener {
-            replaceFragment(FaceDetectFragment(), R.id.fragmentContainer, true)
+        viewReset.setOnClickListener {
+            RealSense.nReset()
         }
-        viewEnroll.setOnClickListener {
-            replaceFragment(EnrollFragment(), R.id.fragmentContainer, true)
+        viewDetect.setOnClickListener {
+            replaceFragment(DetectFragment(), R.id.fragmentContainer, true)
         }
         viewAutoEnroll.setOnClickListener {
-            Toast.makeText(this, "dev", Toast.LENGTH_SHORT).show()
+            replaceFragment(AutoEnrollFragment(), R.id.fragmentContainer, true)
+        }
+
+
+        viewEnroll.setOnClickListener {
         }
         viewMotionEnroll.setOnClickListener {
-            Toast.makeText(this, "dev", Toast.LENGTH_SHORT).show()
         }
         viewCapturePortrait.setOnClickListener {
-            Toast.makeText(this, "dev", Toast.LENGTH_SHORT).show()
         }
 
 
-        viewColorStart.setOnClickListener {
-            textViewColor.setTextColor(Color.GREEN)
-            ColorSense.initPipeline()
+        viewColorPipeStart.setOnClickListener {
+            ColorSensor.instance.startPipeline()
         }
-        viewColorStop.setOnClickListener {
-            textViewColor.setTextColor(Color.DKGRAY)
-            ColorSense.stopPipeline()
+        viewColorPipeStop.setOnClickListener {
+            ColorSensor.instance.stopPipeline()
+        }
+        viewColorStreamStart.setOnClickListener {
+            ColorSensor.instance.startStream()
+        }
+        viewColorStreamStop.setOnClickListener {
+            ColorSensor.instance.stopStream()
         }
         viewColorCapture.setOnClickListener {
-            ColorSense.capture { imageViewColor.setImageBitmap(it) }
-        }
-        viewColorStream.setOnClickListener {
-            ColorSense.startStream()
+            ColorSensor.instance.capture { ColorSensor.instance.liveData.postValue(it) }
         }
 
 
-        viewDepthStart.setOnClickListener {
-            textViewDepth.setTextColor(Color.GREEN)
-            DepthSense.initPipeline()
+        viewDepthPipeStart.setOnClickListener {
+            DepthSensor.instance.startPipeline()
         }
-        viewDepthStop.setOnClickListener {
-            textViewDepth.setTextColor(Color.DKGRAY)
-            DepthSense.stopPipeline()
+        viewDepthPipeStop.setOnClickListener {
+            DepthSensor.instance.stopPipeline()
+        }
+        viewDepthStreamStart.setOnClickListener {
+            DepthSensor.instance.startStream()
+        }
+        viewDepthStreamStop.setOnClickListener {
+            DepthSensor.instance.stopStream()
         }
         viewDepthCapture.setOnClickListener {
-            DepthSense.capture { imageViewDepth.setImageBitmap(it) }
+            DepthSensor.instance.capture { DepthSensor.instance.liveData.postValue(it) }
         }
-        viewDepthStream.setOnClickListener {
-        }
-    }
 
-    private fun initAutoCapture(){}
+    }
 
 }

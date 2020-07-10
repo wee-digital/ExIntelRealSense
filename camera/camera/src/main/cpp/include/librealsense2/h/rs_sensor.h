@@ -505,8 +505,8 @@ int rs2_get_recommended_processing_blocks_count(const rs2_processing_block_list*
 void rs2_delete_recommended_processing_blocks(rs2_processing_block_list* list);
 
 /**
-* Imports a localization map from file to tm2 tracking device
-* \param[in]  sensor        TM2 position-tracking sensor
+* Imports a localization map from file to tm2 camera device
+* \param[in]  sensor        TM2 position-camera sensor
 * \param[in]  lmap_blob     Localization map raw buffer, serialized
 * \param[in]  blob_size     The buffer's size in bytes
 * \param[out] error         If non-null, receives any error that occurs during this call, otherwise, errors are ignored
@@ -515,8 +515,8 @@ void rs2_delete_recommended_processing_blocks(rs2_processing_block_list* list);
 int rs2_import_localization_map(const rs2_sensor* sensor, const unsigned char* lmap_blob, unsigned int blob_size, rs2_error** error);
 
 /**
-* Extract and store the localization map of tm2 tracking device to file
-* \param[in]  sensor        TM2 position-tracking sensor
+* Extract and store the localization map of tm2 camera device to file
+* \param[in]  sensor        TM2 position-camera sensor
 * \param[in]  lmap_fname    The file name of the localization map
 * \param[out] error         If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return                   Device's response in a rs2_raw_data_buffer, which should be released by rs2_delete_raw_data
@@ -526,10 +526,10 @@ const rs2_raw_data_buffer* rs2_export_localization_map(const rs2_sensor* sensor,
 
 /**
 * Create a named location tag
-* \param[in]  sensor    T2xx position-tracking sensor
+* \param[in]  sensor    T2xx position-camera sensor
 * \param[in]  guid      Null-terminated string of up to 127 characters
-* \param[in]  pos       Position in meters, relative to the current tracking session
-* \param[in]  orient    Quaternion orientation, expressed the the coordinate system of the current tracking session
+* \param[in]  pos       Position in meters, relative to the current camera session
+* \param[in]  orient    Quaternion orientation, expressed the the coordinate system of the current camera session
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return               Non-zero if succeeded, otherwise 0
 */
@@ -537,7 +537,7 @@ int rs2_set_static_node(const rs2_sensor* sensor, const char* guid, const rs2_ve
 
 /**
 * Retrieve a named location tag
-* \param[in]  sensor    T2xx position-tracking sensor
+* \param[in]  sensor    T2xx position-camera sensor
 * \param[in]  guid      Null-terminated string of up to 127 characters
 * \param[out] pos       Position in meters of the tagged (stored) location
 * \param[out] orient    Quaternion orientation of the tagged (stored) location
@@ -548,7 +548,7 @@ int rs2_get_static_node(const rs2_sensor* sensor, const char* guid, rs2_vector *
 
 /**
 * Remove a named location tag
-* \param[in]  sensor    T2xx position-tracking sensor
+* \param[in]  sensor    T2xx position-camera sensor
 * \param[in]  guid      Null-terminated string of up to 127 characters
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return               Non-zero if succeeded, otherwise 0

@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.*
+import wee.digital.camera.ColorSensor
 import wee.digital.camera.detector.FaceDetector
 
 /**
@@ -15,11 +16,11 @@ class DebugDetectJob(private var uiListener: UiListener) :
     FaceDetector.StatusListener {
 
     interface UiListener : FaceDetector.OptionListener, FaceDetector.DataListener,
-        FaceDetector.StatusListener
+            FaceDetector.StatusListener
 
-    private val imagesObserver = Observer<Pair<Bitmap, Bitmap>?> {
+    private val colorObserver = Observer<Bitmap?> {
         it?.apply {
-            detector.detectFace(first, second)
+            detector.detectFace(it)
         }
     }
 
@@ -29,9 +30,9 @@ class DebugDetectJob(private var uiListener: UiListener) :
         it.statusListener = this
     }
 
-    fun observe(lifecycleOwner: LifecycleOwner) {
-        detector.release()
-        //RealSense.imagesLiveData.observe(lifecycleOwner, imagesObserver)
+    fun observe(lifecycleOwner: LifecycleOwner, block: FaceDetector.() -> Unit = {}) {
+        detector.block()
+        ColorSensor.instance.liveData.observe(lifecycleOwner, colorObserver)
         lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
             fun destroy() {

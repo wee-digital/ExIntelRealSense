@@ -1,4 +1,4 @@
-package wee.digital.example.member
+package wee.digital.example.ui
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -21,16 +21,11 @@ class PortraitFragment private constructor() : Fragment() {
 
     var bitmap: Bitmap? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.portrait, container, false)
+    override fun onCreateView(li: LayoutInflater, vg: ViewGroup?, b: Bundle?): View? {
+        return li.inflate(R.layout.portrait, vg, false)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onViewCreated(v: View, b: Bundle?) {
         imageViewPortrait.setImageBitmap(bitmap)
     }
 

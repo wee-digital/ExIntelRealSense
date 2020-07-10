@@ -18,6 +18,36 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.264" />
 
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewColorFace"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/black"
+        app:layout_constraintDimensionRatio="H,1280:720"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewDepthFace"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPreview" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewDepthFace"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/black"
+        app:layout_constraintDimensionRatio="H,1280:720"
+        app:layout_constraintEnd_toStartOf="@+id/imageViewPortrait"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPreview" />
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/imageViewPortrait"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_margin="10dp"
+        android:background="@android:color/black"
+        app:layout_constraintDimensionRatio="H,1280:720"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewPreview" />
+
     <ProgressBar
         android:id="@+id/progressBar"
         android:layout_width="50dp"

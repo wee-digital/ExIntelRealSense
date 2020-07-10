@@ -136,7 +136,27 @@ namespace rs2
 
     inline void error::handle(rs2_error* e)
     {
-      
+        if (e == NULL) return;
+
+        auto type = rs2_get_librealsense_exception_type(e);
+        auto message = rs2_get_error_message(e);
+
+        switch (type) {
+            case RS2_EXCEPTION_TYPE_CAMERA_DISCONNECTED:
+                throw camera_disconnected_error(e);
+            case RS2_EXCEPTION_TYPE_BACKEND:
+                throw backend_error(e);
+            case RS2_EXCEPTION_TYPE_INVALID_VALUE:
+                throw invalid_value_error(e);
+            case RS2_EXCEPTION_TYPE_WRONG_API_CALL_SEQUENCE:
+                throw wrong_api_call_sequence_error(e);
+            case RS2_EXCEPTION_TYPE_NOT_IMPLEMENTED:
+                throw not_implemented_error(e);
+            case RS2_EXCEPTION_TYPE_DEVICE_IN_RECOVERY_MODE:
+                throw device_in_recovery_mode_error(e);
+            default:
+                throw error(e);
+        }
     }
 
     class context;

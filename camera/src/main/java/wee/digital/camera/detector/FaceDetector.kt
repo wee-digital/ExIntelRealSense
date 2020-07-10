@@ -12,11 +12,11 @@ class FaceDetector {
         const val MIN_SIZE = 300
     }
 
-    private var maskFilter = ModelFilter("face/mask/manifest.json")
+    val maskFilter = ModelFilter("face/mask/manifest.json")
 
-    private var depthFilter = ModelFilter("face/depth/manifest.json")
+    val depthFilter = ModelFilter("face/depth/manifest.json")
 
-    private var mtcnn: MTCNN = MTCNN(RealSense.app.assets)
+    private val mtcnn: MTCNN = MTCNN(RealSense.app.assets)
 
     private var currentFace: Box? = null
 
@@ -28,31 +28,30 @@ class FaceDetector {
 
     var optionListener: OptionListener = object : OptionListener {}
 
-    constructor() {
-        depthFilter.initModel()
-        maskFilter.initModel()
-    }
+    var currentColorImage: Bitmap? = null
 
     fun release() {
         currentFace = null
     }
 
-    fun detectFace(colorBitmap: Bitmap, depthBitmap: Bitmap) {
+    fun detectFace(colorBitmap: Bitmap) {
         if (isDetecting) return
         isDetecting = true
         mtcnn.detectFacesAsync(colorBitmap, MIN_SIZE)
-            .addOnCompleteListener { isDetecting = false }
-            .addOnCanceledListener { isDetecting = false }
-            .addOnFailureListener { statusListener?.onFaceLeaved() }
-            .addOnCompleteListener { task ->
-                val box: Box? = task.result.largestBox()
-                if (box == null) {
-                    statusListener?.onFaceLeaved()
-                } else {
-                    statusListener?.onFacePerformed()
-                    onFaceDetect(box, colorBitmap, depthBitmap)
+                .addOnCanceledListener { isDetecting = false }
+                .addOnFailureListener { statusListener?.onFaceLeaved() }
+                .addOnCompleteListener { task ->
+                    val box: Box? = task.result.largestBox()
+                    if (box == null) {
+                        statusListener?.onFaceLeaved()
+                        isDetecting = false
+                    } else {
+                        if (!faceChangeProcess(box)) statusListener?.onFaceChanged()
+                        currentColorImage = colorBitmap
+                        currentFace = box
+                        onFaceDetect(box, colorBitmap)
+                    }
                 }
-            }
     }
 
     fun destroy() {
@@ -60,27 +59,32 @@ class FaceDetector {
         maskFilter.destroy()
     }
 
-
     /**
      * Detect method 1st: use [OptionListener] filter face properties to continue [onMaskDetect]
      */
-    private fun onFaceDetect(box: Box, colorBitmap: Bitmap, depthBitmap: Bitmap) {
+    private fun onFaceDetect(box: Box, colorBitmap: Bitmap) {
 
-        if (!optionListener.onFaceScore(box.score)) return
-
-        if (!optionListener.onFaceRect(box.left(), box.top(), box.faceWidth(), box.faceHeight())) {
+        if (!optionListener.onFaceScore(box.score)) {
+            isDetecting = false
             return
         }
 
+        if (!optionListener.onFaceRect(box.left(), box.top(), box.faceWidth(), box.faceHeight())) {
+            isDetecting = false
+            return
+        }
+
+        statusListener?.onFacePerformed()
+
         var degreesValid = false
         box.getDegrees { x, y -> degreesValid = optionListener.onFaceDegrees(x, y) }
-        if (!degreesValid) return
-
-        if (!faceChangeProcess(box)) statusListener?.onFaceChanged()
+        if (!degreesValid) {
+            isDetecting = false
+            return
+        }
 
         val boxRect = box.transformToRect()
-
-        onMaskDetect(boxRect, colorBitmap, depthBitmap)
+        onMaskFilter(boxRect, colorBitmap)
     }
 
 
@@ -88,50 +92,78 @@ class FaceDetector {
      * Detect method 2nd: use [maskFilter] crop face color image
      * and get vision label to continue [onDepthDetect]
      */
-    private fun onMaskDetect(boxRect: Rect, colorBitmap: Bitmap, depthBitmap: Bitmap) {
+    private fun onMaskFilter(boxRect: Rect, colorBitmap: Bitmap) {
+        if (!maskFilter.isEnable) {
+            optionListener.onMaskLabel(ModelFilter.ANY, 100f)
+            onDepthFilter(boxRect)
+            return
+        }
+        val faceBitmap = boxRect.cropColorFace(colorBitmap)
+        if (faceBitmap != null) {
+            onMaskDetect(boxRect, faceBitmap)
+        } else {
+            isDetecting = false
+        }
 
-        val faceBitmap = boxRect.cropColorFace(colorBitmap) ?: return
+    }
+
+    private fun onMaskDetect(boxRect: Rect, faceBitmap: Bitmap) {
         dataListener?.onFaceColorImage(faceBitmap)
-
         maskFilter.processImage(faceBitmap) { text, confidence ->
-            text ?: return@processImage
-            if (optionListener.onMaskLabel(text, confidence)) {
-                onDepthDetect(boxRect, colorBitmap, depthBitmap)
+            if (text != null && optionListener.onMaskLabel(text, confidence)) {
+                onDepthFilter(boxRect)
+            } else {
+                isDetecting = false
             }
         }
     }
+
 
     /**
      * Detect method 3rd: use [depthFilter] crop face depth image
      * and get vision label to continue [onGetPortrait]
      */
-    private fun onDepthDetect(boxRect: Rect, colorBitmap: Bitmap, depthBitmap: Bitmap) {
-
-        val faceBitmap = boxRect.cropDepthFace(depthBitmap) ?: return
-        dataListener?.onFaceDepthImage(faceBitmap)
-
-        depthFilter.processImage(faceBitmap) { text, confidence ->
-            text ?: return@processImage
-            if (optionListener.onDepthLabel(text, confidence)) {
-                onGetPortrait(boxRect, colorBitmap)
+    private fun onDepthFilter(boxRect: Rect) {
+        if (!depthFilter.isEnable) {
+            optionListener.onDepthLabel(ModelFilter.ANY, 100f)
+            onGetPortrait(boxRect)
+            return
+        }
+        DepthSensor.instance.capture { bitmap ->
+            val faceBitmap = boxRect.cropDepthFace(bitmap)
+            if (faceBitmap != null) {
+                onDepthDetect(boxRect, faceBitmap)
+            } else {
+                isDetecting = false
             }
         }
     }
 
-    /**
-     * Detect method 4th: detected face portrait
-     */
-    private fun onGetPortrait(boxRect: Rect, bitmap: Bitmap) {
-        boxRect.cropPortrait(bitmap)?.also {
-            dataListener?.onPortraitImage(it)
+    private fun onDepthDetect(boxRect: Rect, faceBitmap: Bitmap) {
+        dataListener?.onFaceDepthImage(faceBitmap)
+        depthFilter.processImage(faceBitmap) { text, confidence ->
+            if (text != null && optionListener.onDepthLabel(text, confidence)) {
+                onGetPortrait(boxRect)
+            } else {
+                isDetecting = false
+            }
         }
     }
 
-    private fun faceChangeProcess(face: Box): Boolean {
-        if (currentFace == null) {
-            currentFace = face
-            return false
+
+    /**
+     * Detect method 4th: detected face portrait
+     */
+    private fun onGetPortrait(boxRect: Rect) {
+        val bitmap = currentColorImage ?: return
+        boxRect.cropPortrait(bitmap)?.also {
+            dataListener?.onPortraitImage(it)
         }
+        isDetecting = false
+    }
+
+    private fun faceChangeProcess(face: Box): Boolean {
+        currentFace ?: return false
         val nowRect = face.transformToRect()
         val nowCenterX = nowRect.exactCenterX()
         val nowCenterY = nowRect.exactCenterY()
@@ -141,7 +173,6 @@ class FaceDetector {
         val curCenterY = curRect.exactCenterY()
         val curCenterPoint = PointF(curCenterX, curCenterY)
         val dist = distancePoint(nowCenterPoint, curCenterPoint)
-        currentFace = face
         return dist < MIN_DISTANCE
     }
 

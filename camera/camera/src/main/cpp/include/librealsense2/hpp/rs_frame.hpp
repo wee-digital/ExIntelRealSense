@@ -904,7 +904,7 @@ namespace rs2
             error::handle(e);
         }
         /**
-        * Retrieve the pose data from T2xx position tracking sensor
+        * Retrieve the pose data from T2xx position camera sensor
         * \return rs2_pose - orientation and velocity data.
         */
         rs2_pose get_pose_data() const

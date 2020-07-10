@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.75" />
+        app:layout_constraintGuide_percent="0.66" />
 
     <wee.digital.camera.RealSenseView
         android:id="@+id/imageViewColor"
@@ -27,8 +27,9 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="4dp"
-        android:layout_margin="5dp"
-        android:background="@android:color/black"
+        android:padding="1dp"
+        android:layout_margin="4dp"
+        android:background="@drawable/bg_rect_depth"
         app:layout_constraintBottom_toBottomOf="@id/imageViewColor"
         app:layout_constraintDimensionRatio="H,640:480"
         app:layout_constraintEnd_toEndOf="parent"

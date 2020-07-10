@@ -7,48 +7,52 @@ import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.label.FirebaseVisionImageLabeler
 import com.google.firebase.ml.vision.label.FirebaseVisionOnDeviceAutoMLImageLabelerOptions
 
-class ModelFilter(fileName: String) {
+open class ModelFilter(fileName: String) {
+
+    companion object {
+        const val ANY: String = "any"
+    }
 
     private var imageLabeler: FirebaseVisionImageLabeler? = null
 
     private var isChecking: Boolean = false
 
+    var isEnable: Boolean = true
+
     init {
         try {
             val model = FirebaseAutoMLLocalModel.Builder()
-                .setAssetFilePath(fileName)
-                .build()
-            val options =
-                FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(model)
-                    .setConfidenceThreshold(0.5f)
+                    .setAssetFilePath(fileName)
                     .build()
+            val options =
+                    FirebaseVisionOnDeviceAutoMLImageLabelerOptions.Builder(model)
+                            .setConfidenceThreshold(0.5f)
+                            .build()
             imageLabeler = FirebaseVision.getInstance()
                 .getOnDeviceAutoMLImageLabeler(options)
         } catch (e: Exception) {
         }
     }
 
-    fun initModel() {
-
-    }
-
     @Synchronized
     fun processImage(bitmap: Bitmap, onResult: (String?, Float) -> Unit) {
         if (isChecking) {
+            onResult(null, 100f)
             return
         }
         isChecking = true
         try {
             val image = FirebaseVisionImage.fromBitmap(bitmap)
             imageLabeler?.processImage(image)
-                ?.addOnSuccessListener {
-                    val label = it.firstOrNull()
-                    onResult(label?.text, label?.confidence ?: 100f)
-                    isChecking = false
-                }
-                ?.addOnFailureListener {
-                    isChecking = false
-                }
+                    ?.addOnSuccessListener {
+                        val label = it.firstOrNull()
+                        onResult(label?.text, label?.confidence ?: 100f)
+                        isChecking = false
+                    }
+                    ?.addOnFailureListener {
+                        onResult(null, 100f)
+                        isChecking = false
+                    }
 
         } catch (e: Exception) {
             isChecking = false

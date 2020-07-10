@@ -1,4 +1,4 @@
-package wee.digital.example.motion
+package wee.digital.example
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.motion.*
-import wee.digital.example.R
 
 class MotionFragment : Fragment(),
     MotionLayout.TransitionListener {

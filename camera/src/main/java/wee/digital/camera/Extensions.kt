@@ -10,7 +10,9 @@ import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import wee.digital.camera.detector.Box
+import java.io.BufferedReader
 import java.io.ByteArrayOutputStream
+import java.io.InputStreamReader
 import java.util.*
 import kotlin.math.*
 
@@ -190,7 +192,8 @@ fun Rect.cropPortrait(bitmap: Bitmap): Bitmap? {
  * Crop face color image
  * @this: box.transformToRect
  */
-fun Rect.cropColorFace(bitmap: Bitmap): Bitmap? {
+fun Rect.cropColorFace(bitmap: Bitmap?): Bitmap? {
+    bitmap ?: return null
     val rect = this.getRectCrop(bitmap)
     val copiedBitmap = bitmap.copy(Bitmap.Config.RGB_565, true)
     return try {
@@ -206,7 +209,8 @@ fun Rect.cropColorFace(bitmap: Bitmap): Bitmap? {
  * Crop face depth image
  * @this: box.transformToRect
  */
-fun Rect.cropDepthFace(bitmap: Bitmap): Bitmap? {
+fun Rect.cropDepthFace(bitmap: Bitmap?): Bitmap? {
+    bitmap ?: return null
     val rect = this.getFace1280x720()
     var top = rect.top
     if (top < 0) {
@@ -398,4 +402,14 @@ fun Bitmap?.toBytes(): ByteArray {
         ByteArray(1)
     }
 
+}
+
+fun readAsset(filename: String): String {
+    val sb = StringBuilder()
+    BufferedReader(InputStreamReader(RealSense.app.assets.open(filename))).useLines { lines ->
+        lines.forEach {
+            sb.append(it)
+        }
+    }
+    return sb.toString()
 }

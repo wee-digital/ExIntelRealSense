@@ -3,6 +3,7 @@ package wee.digital.camera.job
 import android.graphics.Bitmap
 import androidx.lifecycle.*
 import wee.digital.camera.ColorSensor
+import wee.digital.camera.DepthSensor
 import wee.digital.camera.detector.FaceDetector
 import wee.digital.camera.uiThread
 import java.util.concurrent.atomic.AtomicInteger
@@ -11,14 +12,12 @@ import java.util.concurrent.atomic.AtomicInteger
  * [FaceDetector.DataListener], [FaceDetector.OptionListener], [FaceDetector.StatusListener]
  * face enroll job callback wrapper on UI
  */
-class FaceDetectJob(private var uiListener: Listener) :
-    FaceDetector.DataListener,
-    FaceDetector.OptionListener,
-    FaceDetector.StatusListener {
+class AutoDetectJob(private var uiListener: Listener) :
+        FaceDetector.DataListener,
+        FaceDetector.OptionListener,
+        FaceDetector.StatusListener {
 
     private val noneFaceCount = AtomicInteger()
-
-    private val invalidFaceCount = AtomicInteger()
 
     private var hasDetect: Boolean = false
 
@@ -34,8 +33,8 @@ class FaceDetectJob(private var uiListener: Listener) :
         }
     }
 
-    fun observe(lifecycleOwner: LifecycleOwner) {
-        detector.release()
+    fun observe(lifecycleOwner: LifecycleOwner, block: FaceDetector.() -> Unit = {}) {
+        detector.block()
         startDetect()
         lifecycleOwner.lifecycle.addObserver(object : LifecycleObserver {
             @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
@@ -47,7 +46,6 @@ class FaceDetectJob(private var uiListener: Listener) :
 
     fun startDetect() {
         noneFaceCount.set(0)
-        invalidFaceCount.set(0)
         hasDetect = true
         ColorSensor.instance.liveData.observeForever(colorDetector)
     }
@@ -78,7 +76,7 @@ class FaceDetectJob(private var uiListener: Listener) :
         if (super.onMaskLabel(label, confidence)) {
             return true
         }
-        onFaceInvalid()
+        onFaceLeaved()
         return false
     }
 
@@ -86,7 +84,7 @@ class FaceDetectJob(private var uiListener: Listener) :
         if (super.onDepthLabel(label, confidence)) {
             return true
         }
-        onFaceInvalid()
+        onFaceLeaved()
         return false
     }
 
@@ -95,22 +93,32 @@ class FaceDetectJob(private var uiListener: Listener) :
      * [FaceDetector.StatusListener] implement
      */
     override fun onFacePerformed() {
-        invalidFaceCount.set(0)
+        DepthSensor.instance.startPipeline()
         noneFaceCount.set(0)
+        uiThread {
+            uiListener.onFacePerformed()
+        }
     }
 
     override fun onFaceLeaved() {
-        invalidFaceCount.set(0)
         if (noneFaceCount.incrementAndGet() < 10) return
         uiThread {
             uiListener.onFaceLeaved()
         }
+        if (noneFaceCount.incrementAndGet() > 200) {
+            DepthSensor.instance.stopPipeline()
+        }
+
     }
 
     override fun onFaceChanged() {
         noneFaceCount.set(0)
-        invalidFaceCount.set(0)
     }
+
+
+    /**
+     * [FaceDetector.DataListener] implement
+     */
 
     override fun onPortraitImage(bitmap: Bitmap) {
         if (!hasDetect) return
@@ -120,19 +128,17 @@ class FaceDetectJob(private var uiListener: Listener) :
         }
     }
 
-
-    /**
-     *
-     */
-    private fun onFaceInvalid() {
-        noneFaceCount.set(0)
-        if (!hasDetect) return
-        if (invalidFaceCount.incrementAndGet() < 10) return
+    override fun onFaceColorImage(bitmap: Bitmap?) {
         uiThread {
-            uiListener.onFaceInvalid()
+            uiListener.onFaceColorImage(bitmap)
         }
     }
 
+    override fun onFaceDepthImage(bitmap: Bitmap?) {
+        uiThread {
+            uiListener.onFaceDepthImage(bitmap)
+        }
+    }
 
     /**
      * UI callback
@@ -141,9 +147,13 @@ class FaceDetectJob(private var uiListener: Listener) :
 
         fun onFaceDetected(bitmap: Bitmap)
 
-        fun onFaceLeaved()
+        fun onFaceColorImage(bitmap: Bitmap?)
 
-        fun onFaceInvalid(message: String? = null)
+        fun onFaceDepthImage(bitmap: Bitmap?)
+
+        fun onFacePerformed()
+
+        fun onFaceLeaved()
 
     }
 

@@ -1,5 +1,6 @@
 package wee.digital.camera
 
+import android.app.ActivityManager
 import android.app.Application
 import android.app.PendingIntent
 import android.content.BroadcastReceiver
@@ -10,11 +11,18 @@ import android.hardware.usb.UsbDevice
 import android.hardware.usb.UsbDeviceConnection
 import android.hardware.usb.UsbManager
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
 import com.intel.realsense.librealsense.RsContext
+import io.reactivex.Observable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import java.util.concurrent.TimeUnit
 
 object RealSense {
 
-
+    init {
+        System.loadLibrary("real_sense")
+    }
 
     /**
      * Application
@@ -24,7 +32,9 @@ object RealSense {
     var app: Application
         set(value) {
             mApp = value
-            RsContext.init(value)
+            requestPermission {
+                RsContext.init(value)
+            }
         }
         get() {
             if (null == mApp) throw NullPointerException("module not be set")
@@ -130,6 +140,41 @@ object RealSense {
         usb ?: return false
         return usbManager.hasPermission(usb)
     }
+
+    fun streamMemory(block: (String) -> Unit) {
+        Observable.interval(0, 2000, TimeUnit.MILLISECONDS)
+                .map { freeMemory }
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnNext { block(it.toString()) }
+                .subscribe()
+    }
+
+    private val memoryInfo = ActivityManager.MemoryInfo()
+
+    private val freeMemory: Long
+        get() {
+            val manager = app.getSystemService(AppCompatActivity.ACTIVITY_SERVICE) as ActivityManager
+            manager.getMemoryInfo(memoryInfo)
+            return (memoryInfo.availMem) / (1024 * 1024)
+        }
+
+    /**
+     * Native
+     */
+    external fun nReset()
+
+    external fun nStartColorPipeline(): Boolean
+
+    external fun nStopColorPipeline(): Boolean
+
+    external fun nWaitForColorFrame(raw: ByteArray)
+
+    external fun nStartDepthPipeline(): Boolean
+
+    external fun nStopDepthPipeline(): Boolean
+
+    external fun nWaitForDepthFrame(raw: ByteArray)
 
 }
 

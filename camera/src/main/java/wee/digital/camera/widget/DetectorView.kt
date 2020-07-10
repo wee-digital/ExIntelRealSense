@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.lifecycle.LifecycleOwner
 import kotlinx.android.synthetic.main.widget_detector_view.view.*
 import wee.digital.camera.R
 import wee.digital.camera.detector.FaceDetector
@@ -24,15 +25,19 @@ class DetectorView : ConstraintLayout, DebugDetectJob.UiListener {
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
+            context,
+            attrs,
+            defStyleAttr
     ) {
         onViewInit(context)
     }
 
     private fun onViewInit(context: Context) {
         LayoutInflater.from(context).inflate(R.layout.widget_detector_view, this)
+    }
+
+    fun observe(lifecycleOwner: LifecycleOwner, block: FaceDetector.() -> Unit = {}) {
+        DebugDetectJob(this).observe(lifecycleOwner, block)
     }
 
     /**

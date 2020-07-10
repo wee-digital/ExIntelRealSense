@@ -527,7 +527,7 @@ namespace rs2
         /**
          * Load relocalization map onto device. Only one relocalization map can be imported at a time;
          * any previously existing map will be overwritten.
-         * The imported map exists simultaneously with the map created during the most recent tracking session after start(),
+         * The imported map exists simultaneously with the map created during the most recent camera session after start(),
          * and they are merged after the imported map is relocalized.
          * This operation must be done before start().
          * \param[in] lmap_buf map data as a binary blob
@@ -542,7 +542,7 @@ namespace rs2
         }
 
         /**
-         * Get relocalization map that is currently on device, created and updated during most recent tracking session.
+         * Get relocalization map that is currently on device, created and updated during most recent camera session.
          * Can be called before or after stop().
          * \return map data as a binary blob
          */

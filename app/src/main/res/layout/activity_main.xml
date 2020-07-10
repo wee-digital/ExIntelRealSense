@@ -2,173 +2,149 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayoutCompat3"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewDepthStart"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Start" />
+            android:id="@+id/viewDepthPipeStart"
+            style="@style/RealSense.Button.Horizontal"
+            android:text="pipe start" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewDepthStop"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Stop" />
+            android:id="@+id/viewDepthPipeStop"
+            style="@style/RealSense.Button.Horizontal"
+            android:text="pipe stop" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewDepthStreamStart"
+            style="@style/RealSense.Button.Horizontal"
+            android:text="stream start" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewDepthStreamStop"
+            style="@style/RealSense.Button.Horizontal"
+            android:text="stream stop" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewDepthCapture"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Capture" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewDepthStream"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone"
-            android:text="Stream" />
+            style="@style/RealSense.Button.Horizontal"
+            android:text="capture" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textViewDepth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Depth"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat3"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/linearLayoutCompat2"
+        android:id="@+id/linearLayoutCompat4"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/textViewDepth"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat3"
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewColorStart"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Start" />
+            android:id="@+id/viewColorPipeStart"
+            style="@style/RealSense.Button.Horizontal"
+            android:text="pipe start" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewColorStop"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Stop" />
+            android:id="@+id/viewColorPipeStop"
+            style="@style/RealSense.Button.Horizontal"
+            android:text="pipe stop" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewColorStreamStart"
+            style="@style/RealSense.Button.Horizontal"
+            android:text="stream start" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewColorStreamStop"
+            style="@style/RealSense.Button.Horizontal"
+            android:text="stream stop" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewColorCapture"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Capture" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewColorStream"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:visibility="gone"
-            android:text="Stream" />
+            style="@style/RealSense.Button.Horizontal"
+            android:text="capture" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
-
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/textViewColor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Color"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat2"
-        app:layout_constraintStart_toStartOf="@+id/fragmentContainer" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageViewColor"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_margin="5dp"
-        android:background="@android:color/black"
-        app:layout_constraintDimensionRatio="h,1280:720"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/imageViewDepth"
-        android:layout_width="200dp"
-        android:layout_height="0dp"
-        android:scaleType="centerCrop"
-        android:layout_margin="5dp"
-        android:background="@android:color/black"
-        app:layout_constraintDimensionRatio="h,640:480"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewColor" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/linearLayoutCompat"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="bottom"
         android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat2"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat4"
         app:layout_constraintStart_toStartOf="parent">
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewDebug"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Face detect debug" />
+            android:id="@+id/viewReset"
+            style="@style/RealSense.Button.Vertical"
+            android:text="Reset" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewDetect"
+            style="@style/RealSense.Button.Vertical"
+            android:text="Face detect" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/viewCapturePortrait"
+            style="@style/RealSense.Button.Vertical"
+            android:text="Capture a portrait"
+            android:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewEnroll"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Enroll on click" />
+            style="@style/RealSense.Button.Vertical"
+            android:text="Enroll on click"
+            android:visibility="gone" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewAutoEnroll"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
+            style="@style/RealSense.Button.Vertical"
             android:text="Auto enroll" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/viewMotionEnroll"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Motion enroll" />
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/viewCapturePortrait"
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:text="Capture a portrait" />
+            style="@style/RealSense.Button.Vertical"
+            android:text="Motion enroll"
+            android:visibility="gone" />
 
 
     </androidx.appcompat.widget.LinearLayoutCompat>
+
+    <wee.digital.camera.widget.CameraView
+        android:id="@+id/cameraView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:background="@android:color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayoutCompat2"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewMemory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:textColor="@android:color/holo_red_light"
+        android:textSize="11sp"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:text="Memory"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
