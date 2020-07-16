@@ -33,6 +33,12 @@ android {
         targetCompatibility 1.8
     }
 
+    sourceSets {
+        main {
+            jniLibs.srcDirs = ["libs"]
+        }
+    }
+
     dexOptions {
 
         javaMaxHeapSize "4g"

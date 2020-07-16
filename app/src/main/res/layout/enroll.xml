@@ -6,17 +6,33 @@
     android:layout_height="match_parent"
     android:background="@android:color/white">
 
-    <wee.digital.camera.RealSenseView
-        android:id="@+id/imageViewPreview"
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="H,1280:720"
+        android:background="@android:color/black"
+        app:layout_constraintBottom_toTopOf="@+id/guideline3"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.264" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <wee.digital.camera.RealSenseView
+            android:id="@+id/imageViewPreview"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:adjustViewBounds="true"
+            app:layout_constraintDimensionRatio="1280:720"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewColorFace"
@@ -26,7 +42,7 @@
         android:background="@android:color/black"
         app:layout_constraintDimensionRatio="H,1280:720"
         app:layout_constraintEnd_toStartOf="@+id/imageViewDepthFace"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewPreview" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewDepthFace"
@@ -36,7 +52,7 @@
         android:background="@android:color/black"
         app:layout_constraintDimensionRatio="H,1280:720"
         app:layout_constraintEnd_toStartOf="@+id/imageViewPortrait"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewPreview" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/imageViewPortrait"
@@ -46,7 +62,7 @@
         android:background="@android:color/black"
         app:layout_constraintDimensionRatio="H,1280:720"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewPreview" />
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -56,7 +72,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewPreview"
+        app:layout_constraintTop_toTopOf="@+id/guideline3"
         tools:visibility="visible" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

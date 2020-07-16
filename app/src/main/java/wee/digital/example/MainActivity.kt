@@ -17,13 +17,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         onClicksInit()
-        cameraView.observe(this)
-        RealSense.streamMemory { textViewMemory.text = it }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
+        //cameraView.observe(this)
         RealSense.nReset()
+        RealSense.streamMemory { textViewMemory.text = it }
     }
 
     private fun onClicksInit() {

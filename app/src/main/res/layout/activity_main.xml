@@ -143,8 +143,9 @@
         android:layout_margin="4dp"
         android:textColor="@android:color/holo_red_light"
         android:textSize="11sp"
+        android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        tools:text="Memory"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Memory" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -19,6 +19,222 @@
   },
   {
     "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/build-tools/21.1.2/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/build-tools/25.0.0/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/build-tools/25.0.2/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/build-tools/26.0.1/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/build-tools/28.0.2/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/build-tools/28.0.3/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/build-tools/29.0.1/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/build-tools/29.0.2/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/build-tools/29.0.3/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/build-tools/30.0.0-rc2/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/cmake/3.10.2.4988404/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/cmake/3.6.4111459/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/docs/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/emulator/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/extras/google/google_play_services/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/extras/google/instantapps/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/extras/google/market_apk_expansion/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/extras/google/market_licensing/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/extras/intel/Hardware_Accelerated_Execution_Manager/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/ndk/20.0.5594570/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/ndk/21.0.6113669/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/ndk/21.3.6528147/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/patcher/v4/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/platform-tools/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/platforms/android-19/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/platforms/android-23/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/platforms/android-25/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/platforms/android-26/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/platforms/android-27/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/platforms/android-28/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/platforms/android-29/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/sources/android-29/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/system-images/android-25/google_apis/x86/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/system-images/android-29/google_apis/x86/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/system-images/android-R/google_apis_playstore/x86/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
+    "message": "Parsing /Users/huy/Library/Android/sdk/tools/package.xml",
+    "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
+    "tag": "release|armeabi-v7a"
+  },
+  {
+    "level": "INFO",
     "message": "- CMake found in SDK at \u0027/Users/huy/Library/Android/sdk/cmake/3.10.2.4988404\u0027 had version \u00273.10.2\u0027",
     "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/CMakeLists.txt",
     "tag": "release|armeabi-v7a"

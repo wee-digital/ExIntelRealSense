@@ -64,18 +64,21 @@ abstract class RealSenseSensor {
     fun startPipeline() {
         if (isOnCommand || isStarted) return
         isOnCommand = true
-        isStarted = onStartPipeline()
-        isOnCommand = false
+        Thread {
+            isStarted = onStartPipeline()
+            isOnCommand = false
+        }.start()
     }
 
     fun stopPipeline() {
         if (isOnCommand || !isStarted) return
         isOnCommand = true
         stopStream()
-        Handler().postDelayed({
+        Thread.sleep(2000)
+        Thread {
             isStarted = onStopPipeline()
             isOnCommand = false
-        }, 1000)
+        }.start()
     }
 
 }
