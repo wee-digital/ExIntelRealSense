@@ -1,7 +1,6 @@
 package wee.digital.camera
 
 import android.graphics.Bitmap
-import android.os.Handler
 import androidx.lifecycle.MutableLiveData
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -56,10 +55,11 @@ abstract class RealSenseSensor {
                 .subscribe()
     }
 
-    @Volatile
-    private var isOnCommand: Boolean = false
+    var isOnCommand: Boolean = false
+        private set
 
-    private var isStarted: Boolean = false
+    var isStarted: Boolean = false
+        private set
 
     fun startPipeline() {
         if (isOnCommand || isStarted) return
@@ -74,7 +74,7 @@ abstract class RealSenseSensor {
         if (isOnCommand || !isStarted) return
         isOnCommand = true
         stopStream()
-        Thread.sleep(2000)
+        Thread.sleep(6000)
         Thread {
             isStarted = onStopPipeline()
             isOnCommand = false

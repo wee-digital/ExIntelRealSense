@@ -24,10 +24,10 @@ class ColorSensor private constructor() : RealSenseSensor() {
 
     override val image: Bitmap?
         get() {
-            if (System.currentTimeMillis() - lastCapture > 120000) {
+            /*if (System.currentTimeMillis() - lastCapture > 120000) {
                 lastCapture = System.currentTimeMillis()
                 return fakeBitmap
-            }
+            }*/
             val t = System.currentTimeMillis()
             val raw = ByteArray(SIZE)
             RealSense.nWaitForColorFrame(raw)

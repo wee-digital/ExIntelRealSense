@@ -19,7 +19,7 @@ class MainActivity : AppCompatActivity() {
         onClicksInit()
         //cameraView.observe(this)
         RealSense.nReset()
-        RealSense.streamMemory { textViewMemory.text = it }
+        //RealSense.streamMemory { textViewMemory.text = it }
     }
 
     private fun onClicksInit() {

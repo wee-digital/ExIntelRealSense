@@ -17,9 +17,9 @@ dependencies {
 }
 
 task extractHeaders(type: Sync) {
-    //dependsOn configurations.downloadHeader
-    //from { configurations.downloadHeader.collect { zipTree(it) } }
-    //into "$projectDir/src/main/cpp/include"
+    dependsOn configurations.downloadHeader
+    from { configurations.downloadHeader.collect { zipTree(it) } }
+    into "$projectDir/src/main/cpp/include"
 }
 
 task extractSo(type: Sync) {

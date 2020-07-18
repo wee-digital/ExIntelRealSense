@@ -94,6 +94,9 @@ class AutoDetectJob(private var uiListener: Listener) :
      */
     override fun onFacePerformed() {
         DepthSensor.instance.startPipeline()
+        if (noneFaceCount.get() == 0) {
+            return
+        }
         noneFaceCount.set(0)
         uiThread {
             uiListener.onFacePerformed()
@@ -101,14 +104,15 @@ class AutoDetectJob(private var uiListener: Listener) :
     }
 
     override fun onFaceLeaved() {
-        if (noneFaceCount.incrementAndGet() < 10) return
-        uiThread {
+        if (noneFaceCount.incrementAndGet() < 10) {
+            return
+        }
+        if (noneFaceCount.incrementAndGet() in 10..16) uiThread {
             uiListener.onFaceLeaved()
         }
-        if (noneFaceCount.incrementAndGet() > 200) {
+        if (noneFaceCount.incrementAndGet() in 500..506) {
             DepthSensor.instance.stopPipeline()
         }
-
     }
 
     override fun onFaceChanged() {

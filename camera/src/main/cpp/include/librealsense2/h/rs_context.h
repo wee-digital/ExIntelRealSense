@@ -72,10 +72,10 @@ void rs2_context_add_software_device(rs2_context* ctx, rs2_device* dev, rs2_erro
 void rs2_context_remove_device(rs2_context* ctx, const char* file, rs2_error** error);
 
 /**
- * Removes camera module.
- * function query_devices() locks the camera module in the tm_context object.
- * If the camera module device is not used it should be removed using this function, so that other applications could find it.
- * This function can be used both before the call to query_device() to prevent enabling camera modules or afterwards to
+ * Removes tracking module.
+ * function query_devices() locks the tracking module in the tm_context object. 
+ * If the tracking module device is not used it should be removed using this function, so that other applications could find it.
+ * This function can be used both before the call to query_device() to prevent enabling tracking modules or afterwards to 
  * release them.
  */
 void rs2_context_unload_tracking_module(rs2_context* ctx, rs2_error** error);

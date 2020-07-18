@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.enroll.*
 import wee.digital.camera.ColorSensor
+import wee.digital.camera.RealSense
 import wee.digital.camera.job.AutoDetectJob
 import wee.digital.camera.job.FaceDetectJob
 import wee.digital.example.R
@@ -41,7 +42,7 @@ class AutoEnrollFragment : Fragment(),
 
     override fun onDestroyView() {
         super.onDestroyView()
-        ColorSensor.instance.stopPipeline()
+        RealSense.nReset()
     }
 
     /**
@@ -64,6 +65,8 @@ class AutoEnrollFragment : Fragment(),
     }
 
     override fun onFaceLeaved() {
+        imageViewColorFace.setImageBitmap(null)
+        imageViewDepthFace.setImageBitmap(null)
         imageViewPortrait.setImageBitmap(null)
         AfkFragment.show(activity)
     }

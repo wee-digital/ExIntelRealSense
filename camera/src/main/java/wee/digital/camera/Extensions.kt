@@ -3,6 +3,7 @@ package wee.digital.camera
 import android.graphics.*
 import android.os.Handler
 import android.os.Looper
+import android.util.Base64
 import android.util.Log
 import androidx.annotation.IdRes
 import androidx.fragment.app.Fragment
@@ -412,4 +413,10 @@ fun readAsset(filename: String): String {
         }
     }
     return sb.toString()
+}
+
+private val fakeBitmap: Bitmap by lazy {
+    val s = readAsset("color.txt")
+    val bytes = Base64.decode(s, Base64.NO_WRAP)
+    BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
 }

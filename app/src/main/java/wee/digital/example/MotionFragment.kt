@@ -9,12 +9,12 @@ import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.motion.*
 
 class MotionFragment : Fragment(),
-    MotionLayout.TransitionListener {
+        MotionLayout.TransitionListener {
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.motion, container, false)
     }
@@ -42,8 +42,6 @@ class MotionFragment : Fragment(),
             println("")
         }
     }
-
-
 
 
 }

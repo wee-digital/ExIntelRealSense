@@ -136,12 +136,10 @@ namespace rs2
 
     inline void error::handle(rs2_error* e)
     {
-        if (e == NULL) return;
-
-        auto type = rs2_get_librealsense_exception_type(e);
-        auto message = rs2_get_error_message(e);
-
-        switch (type) {
+        if (e)
+        {
+            auto h = rs2_get_librealsense_exception_type(e);
+            switch (h) {
             case RS2_EXCEPTION_TYPE_CAMERA_DISCONNECTED:
                 throw camera_disconnected_error(e);
             case RS2_EXCEPTION_TYPE_BACKEND:
@@ -156,6 +154,7 @@ namespace rs2
                 throw device_in_recovery_mode_error(e);
             default:
                 throw error(e);
+            }
         }
     }
 
