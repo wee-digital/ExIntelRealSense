@@ -1,8 +1,4 @@
 /build/
 /.idea
-/.gradle
 /.setting
-/camera/.cxx/cmake/debug/
 *.iml
-camera/.cxx/cmake/release/armeabi-v7a/.ninja_log
-camera/.cxx/cmake/release/armeabi-v7a/.ninja_deps

@@ -1,7 +1,0 @@
-[
-{
-  "directory": "/Users/huy/Documents/Example/ExIntelRealSense/camera/.cxx/cmake/release/armeabi-v7a",
-  "command": "/Users/huy/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++ --target=armv7-none-linux-androideabi22 --gcc-toolchain=/Users/huy/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64 --sysroot=/Users/huy/Library/Android/sdk/ndk/21.3.6528147/toolchains/llvm/prebuilt/darwin-x86_64/sysroot  -Dreal_sense_EXPORTS -I../../../../src/main/cpp/include  -g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security  -fexceptions -Oz -DNDEBUG  -fPIC   -o CMakeFiles/real_sense.dir/src/main/cpp/real_sense.cpp.o -c /Users/huy/Documents/Example/ExIntelRealSense/camera/src/main/cpp/real_sense.cpp",
-  "file": "/Users/huy/Documents/Example/ExIntelRealSense/camera/src/main/cpp/real_sense.cpp"
-}
-]
