@@ -22,13 +22,13 @@ extern "C" {
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return               Device count
 */
-int rs2_get_device_count(const rs2_device_list* info_list, rs2_error** error);
+int rs2_get_device_count(const rs2_device_list *info_list, rs2_error **error);
 
 /**
 * Deletes device list, any devices created using this list will remain unaffected.
 * \param[in]  info_list List to delete
 */
-void rs2_delete_device_list(rs2_device_list* info_list);
+void rs2_delete_device_list(rs2_device_list *info_list);
 
 /**
 * Checks if a specific device is contained inside a device list.
@@ -37,7 +37,8 @@ void rs2_delete_device_list(rs2_device_list* info_list);
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return               True if the device is in the list and false otherwise
 */
-int rs2_device_list_contains(const rs2_device_list* info_list, const rs2_device* device, rs2_error** error);
+int rs2_device_list_contains(const rs2_device_list *info_list, const rs2_device *device,
+                             rs2_error **error);
 
 /**
 * Creates a device by index. The device object represents a physical camera and provides the means to manipulate it.
@@ -46,13 +47,13 @@ int rs2_device_list_contains(const rs2_device_list* info_list, const rs2_device*
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return               The requested device, should be released by rs2_delete_device
 */
-rs2_device* rs2_create_device(const rs2_device_list* info_list, int index, rs2_error** error);
+rs2_device *rs2_create_device(const rs2_device_list *info_list, int index, rs2_error **error);
 
 /**
 * Delete RealSense device
 * \param[in]  device    Realsense device to delete
 */
-void rs2_delete_device(rs2_device* device);
+void rs2_delete_device(rs2_device *device);
 
 /**
 * Retrieve camera specific information, like versions of various internal components.
@@ -61,7 +62,7 @@ void rs2_delete_device(rs2_device* device);
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return               The requested camera info string, in a format specific to the device model
 */
-const char* rs2_get_device_info(const rs2_device* device, rs2_camera_info info, rs2_error** error);
+const char *rs2_get_device_info(const rs2_device *device, rs2_camera_info info, rs2_error **error);
 
 /**
 * Check if a camera supports a specific camera info type.
@@ -70,7 +71,7 @@ const char* rs2_get_device_info(const rs2_device* device, rs2_camera_info info, 
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return               True if the parameter both exist and well-defined for the specific device
 */
-int rs2_supports_device_info(const rs2_device* device, rs2_camera_info info, rs2_error** error);
+int rs2_supports_device_info(const rs2_device *device, rs2_camera_info info, rs2_error **error);
 
 /**
  * Send hardware reset request to the device. The actual reset is asynchronous.
@@ -78,7 +79,7 @@ int rs2_supports_device_info(const rs2_device* device, rs2_camera_info info, rs2
  * \param[in]  device   The RealSense device to reset
  * \param[out] error    If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  */
-void rs2_hardware_reset(const rs2_device * device, rs2_error ** error);
+void rs2_hardware_reset(const rs2_device *device, rs2_error **error);
 
 /**
 * Send raw data to device
@@ -88,7 +89,9 @@ void rs2_hardware_reset(const rs2_device * device, rs2_error ** error);
 * \param[out] error                     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return                               Device's response in a rs2_raw_data_buffer, which should be released by rs2_delete_raw_data
 */
-const rs2_raw_data_buffer* rs2_send_and_receive_raw_data(rs2_device* device, void* raw_data_to_send, unsigned size_of_raw_data_to_send, rs2_error** error);
+const rs2_raw_data_buffer *rs2_send_and_receive_raw_data(rs2_device *device, void *raw_data_to_send,
+                                                         unsigned size_of_raw_data_to_send,
+                                                         rs2_error **error);
 
 /**
 * Test if the given device can be extended to the requested extension.
@@ -97,7 +100,8 @@ const rs2_raw_data_buffer* rs2_send_and_receive_raw_data(rs2_device* device, voi
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return               Non-zero value iff the device can be extended to the given extension
 */
-int rs2_is_device_extendable_to(const rs2_device* device, rs2_extension extension, rs2_error ** error);
+int
+rs2_is_device_extendable_to(const rs2_device *device, rs2_extension extension, rs2_error **error);
 
 /**
 * Create a static snapshot of all connected sensors within a specific device.
@@ -105,7 +109,7 @@ int rs2_is_device_extendable_to(const rs2_device* device, rs2_extension extensio
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return               The list of sensors, should be released by rs2_delete_sensor_list
 */
-rs2_sensor_list* rs2_query_sensors(const rs2_device* device, rs2_error** error);
+rs2_sensor_list *rs2_query_sensors(const rs2_device *device, rs2_error **error);
 
 /**
 * Enter the given device into loopback operation mode that uses the given file as input for raw data
@@ -113,14 +117,14 @@ rs2_sensor_list* rs2_query_sensors(const rs2_device* device, rs2_error** error);
 * \param[in]  from_file  Path to bag file with raw data for loopback
 * \param[out] error      If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_loopback_enable(const rs2_device* device, const char* from_file, rs2_error** error);
+void rs2_loopback_enable(const rs2_device *device, const char *from_file, rs2_error **error);
 
 /**
 * Restores the given device into normal operation mode
 * \param[in]  device     Device to restore to normal operation mode
 * \param[out] error      If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_loopback_disable(const rs2_device* device, rs2_error** error);
+void rs2_loopback_disable(const rs2_device *device, rs2_error **error);
 
 /**
 * Checks if the device is in loopback mode or not
@@ -128,7 +132,7 @@ void rs2_loopback_disable(const rs2_device* device, rs2_error** error);
 * \param[out] error      If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return true if the device is in loopback operation mode
 */
-int rs2_loopback_is_enabled(const rs2_device* device, rs2_error** error);
+int rs2_loopback_is_enabled(const rs2_device *device, rs2_error **error);
 
 /**
 * Connects to a given tm2 controller
@@ -136,7 +140,8 @@ int rs2_loopback_is_enabled(const rs2_device* device, rs2_error** error);
 * \param[in]  mac_addr   The MAC address of the desired controller
 * \param[out] error      If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_connect_tm2_controller(const rs2_device* device, const unsigned char* mac_addr, rs2_error** error);
+void rs2_connect_tm2_controller(const rs2_device *device, const unsigned char *mac_addr,
+                                rs2_error **error);
 
 /**
 * Disconnects a given tm2 controller
@@ -144,7 +149,7 @@ void rs2_connect_tm2_controller(const rs2_device* device, const unsigned char* m
 * \param[in]  id         The ID of the desired controller
 * \param[out] error      If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_disconnect_tm2_controller(const rs2_device* device, int id, rs2_error** error);
+void rs2_disconnect_tm2_controller(const rs2_device *device, int id, rs2_error **error);
 
 
 /** 
@@ -152,14 +157,14 @@ void rs2_disconnect_tm2_controller(const rs2_device* device, int id, rs2_error**
 * \param[in] device       The RealSense device
 * \param[out] error       If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_reset_to_factory_calibration(const rs2_device* device, rs2_error** e);
+void rs2_reset_to_factory_calibration(const rs2_device *device, rs2_error **e);
 
 /**
 * Write calibration to device's EEPROM
 * \param[in] device       The RealSense device
 * \param[out] error       If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_write_calibration(const rs2_device* device, rs2_error** e);
+void rs2_write_calibration(const rs2_device *device, rs2_error **e);
 
 /**
 * Update device to the provided firmware, the device must be extendable to RS2_EXTENSION_UPDATABLE.
@@ -170,7 +175,8 @@ void rs2_write_calibration(const rs2_device* device, rs2_error** e);
 * \param[in]  callback      Optional callback for update progress notifications, the progress value is normailzed to 1
 * \param[out] error         If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_update_firmware_cpp(const rs2_device* device, const void* fw_image, int fw_image_size, rs2_update_progress_callback* callback, rs2_error** error);
+void rs2_update_firmware_cpp(const rs2_device *device, const void *fw_image, int fw_image_size,
+                             rs2_update_progress_callback *callback, rs2_error **error);
 
 /**
 * Update device to the provided firmware, the device must be extendable to RS2_EXTENSION_UPDATABLE.
@@ -182,7 +188,9 @@ void rs2_update_firmware_cpp(const rs2_device* device, const void* fw_image, int
 * \param[in]  client_data   Optional client data for the callback
 * \param[out] error         If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_update_firmware(const rs2_device* device, const void* fw_image, int fw_image_size, rs2_update_progress_callback_ptr callback, void* client_data, rs2_error** error);
+void rs2_update_firmware(const rs2_device *device, const void *fw_image, int fw_image_size,
+                         rs2_update_progress_callback_ptr callback, void *client_data,
+                         rs2_error **error);
 
 /**
 * Create backup of camera flash memory. Such backup does not constitute valid firmware image, and cannot be
@@ -191,7 +199,9 @@ void rs2_update_firmware(const rs2_device* device, const void* fw_image, int fw_
 * \param[in]  callback      Optional callback for update progress notifications, the progress value is normailzed to 1
 * \param[out] error         If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-const rs2_raw_data_buffer* rs2_create_flash_backup_cpp(const rs2_device* device, rs2_update_progress_callback* callback, rs2_error** error);
+const rs2_raw_data_buffer *
+rs2_create_flash_backup_cpp(const rs2_device *device, rs2_update_progress_callback *callback,
+                            rs2_error **error);
 
 /**
 * Create backup of camera flash memory. Such backup does not constitute valid firmware image, and cannot be
@@ -201,7 +211,9 @@ const rs2_raw_data_buffer* rs2_create_flash_backup_cpp(const rs2_device* device,
 * \param[in]  client_data   Optional client data for the callback
 * \param[out] error         If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-const rs2_raw_data_buffer* rs2_create_flash_backup(const rs2_device* device, rs2_update_progress_callback_ptr callback, void* client_data, rs2_error** error);
+const rs2_raw_data_buffer *
+rs2_create_flash_backup(const rs2_device *device, rs2_update_progress_callback_ptr callback,
+                        void *client_data, rs2_error **error);
 
 #define RS2_UNSIGNED_UPDATE_MODE_UPDATE     0
 #define RS2_UNSIGNED_UPDATE_MODE_READ_ONLY  1
@@ -218,7 +230,10 @@ const rs2_raw_data_buffer* rs2_create_flash_backup(const rs2_device* device, rs2
 * \param[in]  update_mode   Select one of RS2_UNSIGNED_UPDATE_MODE, WARNING!!! setting to any option other than RS2_UNSIGNED_UPDATE_MODE_UPDATE will make this call unsafe and might damage the camera
 * \param[out] error         If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_update_firmware_unsigned_cpp(const rs2_device* device, const void* fw_image, int fw_image_size, rs2_update_progress_callback* callback, int update_mode, rs2_error** error);
+void
+rs2_update_firmware_unsigned_cpp(const rs2_device *device, const void *fw_image, int fw_image_size,
+                                 rs2_update_progress_callback *callback, int update_mode,
+                                 rs2_error **error);
 
 /**
 * Update device to the provided firmware by writing raw data directly to the flash, this command can be executed only on unlocked camera.
@@ -232,14 +247,16 @@ void rs2_update_firmware_unsigned_cpp(const rs2_device* device, const void* fw_i
 * \param[in]  update_mode   Select one of RS2_UNSIGNED_UPDATE_MODE, WARNING!!! setting to any option other than RS2_UNSIGNED_UPDATE_MODE_UPDATE will make this call unsafe and might damage the camera
 * \param[out] error         If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_update_firmware_unsigned(const rs2_device* device, const void* fw_image, int fw_image_size, rs2_update_progress_callback_ptr callback, void* client_data, int update_mode, rs2_error** error);
+void rs2_update_firmware_unsigned(const rs2_device *device, const void *fw_image, int fw_image_size,
+                                  rs2_update_progress_callback_ptr callback, void *client_data,
+                                  int update_mode, rs2_error **error);
 
 /**
 * Enter the device to update state, this will cause the updatable device to disconnect and reconnect as update device.
 * \param[in]  device     Device to update
 * \param[out] error      If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_enter_update_state(const rs2_device* device, rs2_error** error);
+void rs2_enter_update_state(const rs2_device *device, rs2_error **error);
 
 /**
 * This will improve the depth noise.
@@ -261,7 +278,10 @@ void rs2_enter_update_state(const rs2_device* device, rs2_error** error);
 * \param[in] timeout_ms         Timeout in ms (use 5000 msec unless instructed otherwise)
 * \return                       New calibration table
 */
-const rs2_raw_data_buffer* rs2_run_on_chip_calibration_cpp(rs2_device* device, const void* json_content, int content_size, float* health, rs2_update_progress_callback* progress_callback, int timeout_ms, rs2_error** error);
+const rs2_raw_data_buffer *
+rs2_run_on_chip_calibration_cpp(rs2_device *device, const void *json_content, int content_size,
+                                float *health, rs2_update_progress_callback *progress_callback,
+                                int timeout_ms, rs2_error **error);
 
 /**
 * This will improve the depth noise.
@@ -284,7 +304,10 @@ const rs2_raw_data_buffer* rs2_run_on_chip_calibration_cpp(rs2_device* device, c
 * \param[in] timeout_ms         Timeout in ms (use 5000 msec unless instructed otherwise)
 * \return                       New calibration table
 */
-const rs2_raw_data_buffer* rs2_run_on_chip_calibration(rs2_device* device, const void* json_content, int content_size, float* health, rs2_update_progress_callback_ptr callback, void* client_data, int timeout_ms, rs2_error** error);
+const rs2_raw_data_buffer *
+rs2_run_on_chip_calibration(rs2_device *device, const void *json_content, int content_size,
+                            float *health, rs2_update_progress_callback_ptr callback,
+                            void *client_data, int timeout_ms, rs2_error **error);
 
 /**
 * This will adjust camera absolute distance to flat target. User needs to enter the known ground truth.
@@ -308,7 +331,10 @@ const rs2_raw_data_buffer* rs2_run_on_chip_calibration(rs2_device* device, const
 * \param[in] timeout_ms          Timeout in ms (use 5000 msec unless instructed otherwise)
 * \return                         New calibration table
 */
-const rs2_raw_data_buffer* rs2_run_tare_calibration_cpp(rs2_device* dev, float ground_truth_mm, const void* json_content, int content_size, rs2_update_progress_callback* progress_callback, int timeout_ms, rs2_error** error);
+const rs2_raw_data_buffer *
+rs2_run_tare_calibration_cpp(rs2_device *dev, float ground_truth_mm, const void *json_content,
+                             int content_size, rs2_update_progress_callback *progress_callback,
+                             int timeout_ms, rs2_error **error);
 
 /**
 * This will adjust camera absolute distance to flat target. User needs to enter the known ground truth.
@@ -333,25 +359,31 @@ const rs2_raw_data_buffer* rs2_run_tare_calibration_cpp(rs2_device* dev, float g
 * \param[in] timeout_ms          Timeout in ms (use 5000 msec unless instructed otherwise)
 * \return                        New calibration table
 */
-const rs2_raw_data_buffer* rs2_run_tare_calibration(rs2_device* dev, float ground_truth_mm, const void* json_content, int content_size, rs2_update_progress_callback_ptr callback, void* client_data, int timeout_ms, rs2_error** error);
+const rs2_raw_data_buffer *
+rs2_run_tare_calibration(rs2_device *dev, float ground_truth_mm, const void *json_content,
+                         int content_size, rs2_update_progress_callback_ptr callback,
+                         void *client_data, int timeout_ms, rs2_error **error);
 
 /**
 *  Read current calibration table from flash.
 * \return    Calibration table
 */
-const rs2_raw_data_buffer* rs2_get_calibration_table(const rs2_device* dev, rs2_error** error);
+const rs2_raw_data_buffer *rs2_get_calibration_table(const rs2_device *dev, rs2_error **error);
 
 /**
 *  Set current table to dynamic area.
 * \param[in]     Calibration table
 */
-void rs2_set_calibration_table(const rs2_device* device, const void* calibration, int calibration_size, rs2_error** error);
+void
+rs2_set_calibration_table(const rs2_device *device, const void *calibration, int calibration_size,
+                          rs2_error **error);
 
 /* Serialize JSON content, returns ASCII-serialized JSON string on success. otherwise nullptr */
-rs2_raw_data_buffer* rs2_serialize_json(rs2_device* dev, rs2_error** error);
+rs2_raw_data_buffer *rs2_serialize_json(rs2_device *dev, rs2_error **error);
 
 /* Load JSON and apply advanced-mode controls */
-void rs2_load_json(rs2_device* dev, const void* json_content, unsigned content_size, rs2_error** error);
+void
+rs2_load_json(rs2_device *dev, const void *json_content, unsigned content_size, rs2_error **error);
 
 #ifdef __cplusplus
 }

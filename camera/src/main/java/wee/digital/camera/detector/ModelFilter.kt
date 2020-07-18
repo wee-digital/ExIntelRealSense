@@ -29,7 +29,7 @@ open class ModelFilter(fileName: String) {
                             .setConfidenceThreshold(0.5f)
                             .build()
             imageLabeler = FirebaseVision.getInstance()
-                .getOnDeviceAutoMLImageLabeler(options)
+                    .getOnDeviceAutoMLImageLabeler(options)
         } catch (e: Exception) {
         }
     }

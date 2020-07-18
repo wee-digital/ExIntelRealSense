@@ -1,4 +1,4 @@
-package wee.digital.example.vm
+package wee.digital.example.camera.vm
 
 import android.graphics.Bitmap
 import android.os.Handler

@@ -1,4 +1,4 @@
-package wee.digital.example
+package wee.digital.example.camera
 
 import android.os.Bundle
 import android.view.LayoutInflater

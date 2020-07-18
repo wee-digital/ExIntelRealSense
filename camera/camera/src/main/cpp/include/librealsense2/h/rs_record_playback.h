@@ -16,8 +16,7 @@ extern "C" {
 
 #include "rs_types.h"
 
-typedef enum rs2_playback_status
-{
+typedef enum rs2_playback_status {
     RS2_PLAYBACK_STATUS_UNKNOWN, /**< Unknown state */
     RS2_PLAYBACK_STATUS_PLAYING, /**< One or more sensors were started, playback is reading and raising data */
     RS2_PLAYBACK_STATUS_PAUSED,  /**< One or more sensors were started, but playback paused reading and paused raising data*/
@@ -25,7 +24,7 @@ typedef enum rs2_playback_status
     RS2_PLAYBACK_STATUS_COUNT
 } rs2_playback_status;
 
-const char* rs2_playback_status_to_string(rs2_playback_status status);
+const char *rs2_playback_status_to_string(rs2_playback_status status);
 
 typedef void (*rs2_playback_status_changed_callback_ptr)(rs2_playback_status);
 
@@ -36,7 +35,7 @@ typedef void (*rs2_playback_status_changed_callback_ptr)(rs2_playback_status);
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  * \return A pointer to a device that records its data to file, or null in case of failure
  */
-rs2_device* rs2_create_record_device(const rs2_device* device, const char* file, rs2_error** error);
+rs2_device *rs2_create_record_device(const rs2_device *device, const char *file, rs2_error **error);
 
 /**
 * Creates a recording device to record the given device and save it to the given file
@@ -46,7 +45,9 @@ rs2_device* rs2_create_record_device(const rs2_device* device, const char* file,
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return A pointer to a device that records its data to file, or null in case of failure
 */
-rs2_device* rs2_create_record_device_ex(const rs2_device* device, const char* file, int compression_enabled, rs2_error** error);
+rs2_device *
+rs2_create_record_device_ex(const rs2_device *device, const char *file, int compression_enabled,
+                            rs2_error **error);
 
 /**
 * Pause the recording device without stopping the actual device from streaming.
@@ -54,14 +55,14 @@ rs2_device* rs2_create_record_device_ex(const rs2_device* device, const char* fi
 * \param[in]  device    A recording device
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_record_device_pause(const rs2_device* device, rs2_error** error);
+void rs2_record_device_pause(const rs2_device *device, rs2_error **error);
 
 /**
 * Unpause the recording device. Resume will cause the device to continue writing new data to the file, in particular, frames and changes to extensions
 * \param[in]  device    A recording device
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_record_device_resume(const rs2_device* device, rs2_error** error);
+void rs2_record_device_resume(const rs2_device *device, rs2_error **error);
 
 /**
 * Gets the name of the file to which the recorder is writing
@@ -69,7 +70,7 @@ void rs2_record_device_resume(const rs2_device* device, rs2_error** error);
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return The  name of the file to which the recorder is writing
 */
-const char* rs2_record_device_filename(const rs2_device* device, rs2_error** error);
+const char *rs2_record_device_filename(const rs2_device *device, rs2_error **error);
 
 /**
 * Creates a playback device to play the content of the given file
@@ -77,7 +78,7 @@ const char* rs2_record_device_filename(const rs2_device* device, rs2_error** err
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return A pointer to a device that plays data from the file, or null in case of failure
 */
-rs2_device* rs2_create_playback_device(const char* file, rs2_error** error);
+rs2_device *rs2_create_playback_device(const char *file, rs2_error **error);
 
 /**
  * Gets the path of the file used by the playback device
@@ -85,7 +86,7 @@ rs2_device* rs2_create_playback_device(const char* file, rs2_error** error);
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  * \return Path to the file used by the playback device
  */
-const char* rs2_playback_device_get_file_path(const rs2_device* device, rs2_error** error);
+const char *rs2_playback_device_get_file_path(const rs2_device *device, rs2_error **error);
 
 /**
  * Gets the total duration of the file in units of nanoseconds
@@ -93,7 +94,7 @@ const char* rs2_playback_device_get_file_path(const rs2_device* device, rs2_erro
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  * \return Total duration of the file in units of nanoseconds
  */
-unsigned long long int rs2_playback_get_duration(const rs2_device* device, rs2_error** error);
+unsigned long long int rs2_playback_get_duration(const rs2_device *device, rs2_error **error);
 
 /**
  * Set the playback to a specified time point of the played data
@@ -101,7 +102,7 @@ unsigned long long int rs2_playback_get_duration(const rs2_device* device, rs2_e
  * \param[in] time       The time point to which playback should seek, expressed in units of nanoseconds (zero value = start)
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  */
-void rs2_playback_seek(const rs2_device* device, long long int time, rs2_error** error);
+void rs2_playback_seek(const rs2_device *device, long long int time, rs2_error **error);
 
 /**
  * Gets the current position of the playback in the file in terms of time. Units are expressed in nanoseconds
@@ -109,7 +110,7 @@ void rs2_playback_seek(const rs2_device* device, long long int time, rs2_error**
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  * \return Current position of the playback in the file in terms of time. Units are expressed in nanoseconds
  */
-unsigned long long int rs2_playback_get_position(const rs2_device* device, rs2_error** error);
+unsigned long long int rs2_playback_get_position(const rs2_device *device, rs2_error **error);
 
 /**
  * Pauses the playback
@@ -118,7 +119,7 @@ unsigned long long int rs2_playback_get_position(const rs2_device* device, rs2_e
  * \param[in] device A playback device
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  */
-void rs2_playback_device_resume(const rs2_device* device, rs2_error** error);
+void rs2_playback_device_resume(const rs2_device *device, rs2_error **error);
 
 /**
  * Un-pauses the playback
@@ -126,7 +127,7 @@ void rs2_playback_device_resume(const rs2_device* device, rs2_error** error);
  * \param[in] device A playback device
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  */
-void rs2_playback_device_pause(const rs2_device* device, rs2_error** error);
+void rs2_playback_device_pause(const rs2_device *device, rs2_error **error);
 
 /**
  * Set the playback to work in real time or non real time
@@ -140,7 +141,7 @@ void rs2_playback_device_pause(const rs2_device* device, rs2_error** error);
  * \param[in] real_time  Indicates if real time is requested, 0 means false, otherwise true
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  */
-void rs2_playback_device_set_real_time(const rs2_device* device, int real_time, rs2_error** error);
+void rs2_playback_device_set_real_time(const rs2_device *device, int real_time, rs2_error **error);
 
 /**
  * Indicates if playback is in real time mode or non real time
@@ -148,7 +149,7 @@ void rs2_playback_device_set_real_time(const rs2_device* device, int real_time, 
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  * \return True iff playback is in real time mode. 0 means false, otherwise true
  */
-int rs2_playback_device_is_real_time(const rs2_device* device, rs2_error** error);
+int rs2_playback_device_is_real_time(const rs2_device *device, rs2_error **error);
 
 /**
  * Register to receive callback from playback device upon its status changes
@@ -159,7 +160,9 @@ int rs2_playback_device_is_real_time(const rs2_device* device, rs2_error** error
  * \param[in] callback   A callback handler that will be invoked when the playback status changes
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  */
-void rs2_playback_device_set_status_changed_callback(const rs2_device* device, rs2_playback_status_changed_callback* callback, rs2_error** error);
+void rs2_playback_device_set_status_changed_callback(const rs2_device *device,
+                                                     rs2_playback_status_changed_callback *callback,
+                                                     rs2_error **error);
 
 /**
  * Returns the current state of the playback device
@@ -167,7 +170,8 @@ void rs2_playback_device_set_status_changed_callback(const rs2_device* device, r
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  * \return Current state of the playback
  */
-rs2_playback_status rs2_playback_device_get_current_status(const rs2_device* device, rs2_error** error);
+rs2_playback_status
+rs2_playback_device_get_current_status(const rs2_device *device, rs2_error **error);
 
 /**
  * Set the playing speed
@@ -176,7 +180,8 @@ rs2_playback_status rs2_playback_device_get_current_status(const rs2_device* dev
  * \param[in] speed  Indicates a multiplication of the speed to play (e.g: 1 = normal, 0.5 twice as slow)
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  */
-void rs2_playback_device_set_playback_speed(const rs2_device* device, float speed, rs2_error** error);
+void
+rs2_playback_device_set_playback_speed(const rs2_device *device, float speed, rs2_error **error);
 
 /**
 * Stops the playback
@@ -184,7 +189,7 @@ void rs2_playback_device_set_playback_speed(const rs2_device* device, float spee
 * \param[in] device A playback device
 * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_playback_device_stop(const rs2_device* device, rs2_error** error);
+void rs2_playback_device_stop(const rs2_device *device, rs2_error **error);
 
 #ifdef __cplusplus
 }

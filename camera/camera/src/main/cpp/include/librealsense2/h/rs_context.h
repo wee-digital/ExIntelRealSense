@@ -12,6 +12,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 #include "rs_types.h"
 
 /**
@@ -20,13 +21,13 @@ extern "C" {
 * \param[out] error  If non-null, receives any error that occurs during this call, otherwise, errors are ignored.
 * \return            Context object
 */
-rs2_context* rs2_create_context(int api_version, rs2_error** error);
+rs2_context *rs2_create_context(int api_version, rs2_error **error);
 
 /**
 * \brief Frees the relevant context object.
 * \param[in] context Object that is no longer needed
 */
-void rs2_delete_context(rs2_context* context);
+void rs2_delete_context(rs2_context *context);
 
 /**
 * set callback to get devices changed events
@@ -35,7 +36,9 @@ void rs2_delete_context(rs2_context* context);
 * \param[in] callback callback object created from c++ application. ownership over the callback object is moved into the context
 * \param[out] error  if non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_set_devices_changed_callback_cpp(rs2_context* context, rs2_devices_changed_callback* callback, rs2_error** error);
+void
+rs2_set_devices_changed_callback_cpp(rs2_context *context, rs2_devices_changed_callback *callback,
+                                     rs2_error **error);
 
 /**
 * set callback to get devices changed events
@@ -44,7 +47,9 @@ void rs2_set_devices_changed_callback_cpp(rs2_context* context, rs2_devices_chan
 * \param[in] callback function pointer to register as per-notifications callback
 * \param[out] error  if non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-void rs2_set_devices_changed_callback(const rs2_context* context, rs2_devices_changed_callback_ptr callback, void* user, rs2_error** error);
+void rs2_set_devices_changed_callback(const rs2_context *context,
+                                      rs2_devices_changed_callback_ptr callback, void *user,
+                                      rs2_error **error);
 
 /**
  * Create a new device and add it to the context
@@ -53,15 +58,15 @@ void rs2_set_devices_changed_callback(const rs2_context* context, rs2_devices_ch
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  * @return  A pointer to a device that plays data from the file, or null in case of failure
  */
-rs2_device* rs2_context_add_device(rs2_context* ctx, const char* file, rs2_error** error);
-    
+rs2_device *rs2_context_add_device(rs2_context *ctx, const char *file, rs2_error **error);
+
 /**
  * Add an instance of software device to the context
  * \param ctx   The context to which the new device will be added
  * \param dev   Instance of software device to register into the context
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  */
-void rs2_context_add_software_device(rs2_context* ctx, rs2_device* dev, rs2_error** error);
+void rs2_context_add_software_device(rs2_context *ctx, rs2_device *dev, rs2_error **error);
 
 /**
  * Removes a playback device from the context, if exists
@@ -69,7 +74,7 @@ void rs2_context_add_software_device(rs2_context* ctx, rs2_device* dev, rs2_erro
  * \param[in]  file      The file name that was used to add the device
  * \param[out] error     If non-null, receives any error that occurs during this call, otherwise, errors are ignored
  */
-void rs2_context_remove_device(rs2_context* ctx, const char* file, rs2_error** error);
+void rs2_context_remove_device(rs2_context *ctx, const char *file, rs2_error **error);
 
 /**
  * Removes camera module.
@@ -78,7 +83,7 @@ void rs2_context_remove_device(rs2_context* ctx, const char* file, rs2_error** e
  * This function can be used both before the call to query_device() to prevent enabling camera modules or afterwards to
  * release them.
  */
-void rs2_context_unload_tracking_module(rs2_context* ctx, rs2_error** error);
+void rs2_context_unload_tracking_module(rs2_context *ctx, rs2_error **error);
 
 /**
 * create a static snapshot of all connected devices at the time of the call
@@ -86,7 +91,7 @@ void rs2_context_unload_tracking_module(rs2_context* ctx, rs2_error** error);
 * \param[out] error  if non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return            the list of devices, should be released by rs2_delete_device_list
 */
-rs2_device_list* rs2_query_devices(const rs2_context* context, rs2_error** error);
+rs2_device_list *rs2_query_devices(const rs2_context *context, rs2_error **error);
 
 #define RS2_PRODUCT_LINE_ANY            0xff
 #define RS2_PRODUCT_LINE_ANY_INTEL      0xfe
@@ -105,7 +110,8 @@ rs2_device_list* rs2_query_devices(const rs2_context* context, rs2_error** error
 * \param[out] error  if non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return            the list of devices, should be released by rs2_delete_device_list
 */
-rs2_device_list* rs2_query_devices_ex(const rs2_context* context, int product_mask, rs2_error** error);
+rs2_device_list *
+rs2_query_devices_ex(const rs2_context *context, int product_mask, rs2_error **error);
 
 /**
 * \brief Creates RealSense device_hub .
@@ -113,13 +119,13 @@ rs2_device_list* rs2_query_devices_ex(const rs2_context* context, int product_ma
 * \param[out] error  If non-null, receives any error that occurs during this call, otherwise, errors are ignored.
 * \return            Device hub object
 */
-rs2_device_hub* rs2_create_device_hub(const rs2_context* context, rs2_error** error);
+rs2_device_hub *rs2_create_device_hub(const rs2_context *context, rs2_error **error);
 
 /**
 * \brief Frees the relevant device hub object.
 * \param[in] hub Object that is no longer needed
 */
-void rs2_delete_device_hub(const rs2_device_hub* hub);
+void rs2_delete_device_hub(const rs2_device_hub *hub);
 
 /**
 * If any device is connected return it, otherwise wait until next RealSense device connects.
@@ -129,7 +135,7 @@ void rs2_delete_device_hub(const rs2_device_hub* hub);
 * \param[out] error  If non-null, receives any error that occurs during this call, otherwise, errors are ignored.
 * \return            device object
 */
-rs2_device* rs2_device_hub_wait_for_device(const rs2_device_hub* hub, rs2_error** error);
+rs2_device *rs2_device_hub_wait_for_device(const rs2_device_hub *hub, rs2_error **error);
 
 /**
 * Checks if device is still connected
@@ -138,7 +144,8 @@ rs2_device* rs2_device_hub_wait_for_device(const rs2_device_hub* hub, rs2_error*
 * \param[out] error  If non-null, receives any error that occurs during this call, otherwise, errors are ignored.
 * \return            1 if the device is connected, 0 otherwise
 */
-int rs2_device_hub_is_device_connected(const rs2_device_hub* hub, const rs2_device* device, rs2_error** error);
+int rs2_device_hub_is_device_connected(const rs2_device_hub *hub, const rs2_device *device,
+                                       rs2_error **error);
 
 
 #ifdef __cplusplus

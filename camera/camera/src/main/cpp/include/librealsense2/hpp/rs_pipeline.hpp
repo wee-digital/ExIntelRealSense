@@ -8,15 +8,13 @@
 #include "rs_frame.hpp"
 #include "rs_context.hpp"
 
-namespace rs2
-{
+namespace rs2 {
     /**
     * The pipeline profile includes a device and a selection of active streams, with specific profiles.
     * The profile is a selection of the above under filters and conditions defined by the pipeline.
     * Streams may belong to more than one sensor of the device.
     */
-    class pipeline_profile
-    {
+    class pipeline_profile {
     public:
 
         pipeline_profile() : _pipeline_profile(nullptr) {}
@@ -26,21 +24,19 @@ namespace rs2
         *
         * \return   Vector of stream profiles
         */
-        std::vector<stream_profile> get_streams() const
-        {
-            std::vector<stream_profile> results;
+        std::vector <stream_profile> get_streams() const {
+            std::vector <stream_profile> results;
 
-            rs2_error* e = nullptr;
-            std::shared_ptr<rs2_stream_profile_list> list(
-                rs2_pipeline_profile_get_streams(_pipeline_profile.get(), &e),
-                rs2_delete_stream_profiles_list);
+            rs2_error *e = nullptr;
+            std::shared_ptr <rs2_stream_profile_list> list(
+                    rs2_pipeline_profile_get_streams(_pipeline_profile.get(), &e),
+                    rs2_delete_stream_profiles_list);
             error::handle(e);
 
             auto size = rs2_get_stream_profiles_count(list.get(), &e);
             error::handle(e);
 
-            for (auto i = 0; i < size; i++)
-            {
+            for (auto i = 0; i < size; i++) {
                 stream_profile profile(rs2_get_stream_profile(list.get(), i, &e));
                 error::handle(e);
                 results.push_back(profile);
@@ -57,12 +53,10 @@ namespace rs2
         * \return   The first matching stream profile
         */
 
-        stream_profile get_stream(rs2_stream stream_type, int stream_index = -1) const
-        {
-            for (auto&& s : get_streams())
-            {
-                if (s.stream_type() == stream_type &&  (stream_index == -1 || s.stream_index() == stream_index))
-                {
+        stream_profile get_stream(rs2_stream stream_type, int stream_index = -1) const {
+            for (auto &&s : get_streams()) {
+                if (s.stream_type() == stream_type &&
+                    (stream_index == -1 || s.stream_index() == stream_index)) {
                     return s;
                 }
             }
@@ -80,12 +74,11 @@ namespace rs2
         *
         * \return rs2::device The pipeline selected device
         */
-        device get_device() const
-        {
-            rs2_error* e = nullptr;
-            std::shared_ptr<rs2_device> dev(
-                rs2_pipeline_profile_get_device(_pipeline_profile.get(), &e),
-                rs2_delete_device);
+        device get_device() const {
+            rs2_error *e = nullptr;
+            std::shared_ptr <rs2_device> dev(
+                    rs2_pipeline_profile_get_device(_pipeline_profile.get(), &e),
+                    rs2_delete_device);
 
             error::handle(e);
 
@@ -97,18 +90,21 @@ namespace rs2
         *
         * \return true iff the profile is valid
         */
-        operator bool() const
-        {
+        operator bool() const {
             return _pipeline_profile != nullptr;
         }
 
         explicit operator std::shared_ptr<rs2_pipeline_profile>() { return _pipeline_profile; }
-        pipeline_profile(std::shared_ptr<rs2_pipeline_profile> profile) :
-            _pipeline_profile(profile){}
+
+        pipeline_profile(std::shared_ptr <rs2_pipeline_profile> profile) :
+                _pipeline_profile(profile) {}
+
     private:
 
-        std::shared_ptr<rs2_pipeline_profile> _pipeline_profile;
+        std::shared_ptr <rs2_pipeline_profile> _pipeline_profile;
+
         friend class config;
+
         friend class pipeline;
     };
 
@@ -121,15 +117,13 @@ namespace rs2
     * from the device. It also allows the user to find a matching device for the config filters and the pipeline, in order to
     * select a device explicitly, and modify its controls before streaming starts.
     */
-    class config
-    {
+    class config {
     public:
-        config()
-        {
-            rs2_error* e = nullptr;
+        config() {
+            rs2_error *e = nullptr;
             _config = std::shared_ptr<rs2_config>(
-                rs2_create_config(&e),
-                rs2_delete_config);
+                    rs2_create_config(&e),
+                    rs2_delete_config);
             error::handle(e);
         }
 
@@ -153,10 +147,11 @@ namespace rs2
         * \param[in] format         Stream data format - pixel format for images streams, of data type for other streams. RS2_FORMAT_ANY indicates any.
         * \param[in] framerate      Stream frames per second. 0 indicates any.
         */
-        void enable_stream(rs2_stream stream_type, int stream_index, int width, int height, rs2_format format = RS2_FORMAT_ANY, int framerate = 0)
-        {
-            rs2_error* e = nullptr;
-            rs2_config_enable_stream(_config.get(), stream_type, stream_index, width, height, format, framerate, &e);
+        void enable_stream(rs2_stream stream_type, int stream_index, int width, int height,
+                           rs2_format format = RS2_FORMAT_ANY, int framerate = 0) {
+            rs2_error *e = nullptr;
+            rs2_config_enable_stream(_config.get(), stream_type, stream_index, width, height,
+                                     format, framerate, &e);
             error::handle(e);
         }
 
@@ -166,8 +161,7 @@ namespace rs2
         * \param[in] stream_type    Stream type to be enabled
         * \param[in] stream_index   Stream index, used for multiple streams of the same type. -1 indicates any.
         */
-        void enable_stream(rs2_stream stream_type, int stream_index = -1)
-        {
+        void enable_stream(rs2_stream stream_type, int stream_index = -1) {
             enable_stream(stream_type, stream_index, 0, 0, RS2_FORMAT_ANY, 0);
         }
 
@@ -180,8 +174,8 @@ namespace rs2
         * \param[in] format         Stream data format - pixel format for images streams, of data type for other streams. RS2_FORMAT_ANY indicates any.
         * \param[in] framerate      Stream frames per second. 0 indicates any.
         */
-        void enable_stream(rs2_stream stream_type, int width, int height, rs2_format format = RS2_FORMAT_ANY, int framerate = 0)
-        {
+        void enable_stream(rs2_stream stream_type, int width, int height,
+                           rs2_format format = RS2_FORMAT_ANY, int framerate = 0) {
             enable_stream(stream_type, -1, width, height, format, framerate);
         }
 
@@ -192,8 +186,7 @@ namespace rs2
         * \param[in] format         Stream data format - pixel format for images streams, of data type for other streams. RS2_FORMAT_ANY indicates any.
         * \param[in] framerate      Stream frames per second. 0 indicates any.
         */
-        void enable_stream(rs2_stream stream_type, rs2_format format, int framerate = 0)
-        {
+        void enable_stream(rs2_stream stream_type, rs2_format format, int framerate = 0) {
             enable_stream(stream_type, -1, 0, 0, format, framerate);
         }
 
@@ -205,8 +198,8 @@ namespace rs2
         * \param[in] format         Stream data format - pixel format for images streams, of data type for other streams. RS2_FORMAT_ANY indicates any.
         * \param[in] framerate      Stream frames per second. 0 indicates any.
         */
-        void enable_stream(rs2_stream stream_type, int stream_index, rs2_format format, int framerate = 0)
-        {
+        void enable_stream(rs2_stream stream_type, int stream_index, rs2_format format,
+                           int framerate = 0) {
             enable_stream(stream_type, stream_index, 0, 0, format, framerate);
         }
 
@@ -216,9 +209,8 @@ namespace rs2
         * This filter enables all raw streams of the selected device. The device is either selected explicitly by the
         * application, or by the pipeline requirements or default. The list of streams is device dependent.
         */
-        void enable_all_streams()
-        {
-            rs2_error* e = nullptr;
+        void enable_all_streams() {
+            rs2_error *e = nullptr;
             rs2_config_enable_all_stream(_config.get(), &e);
             error::handle(e);
         }
@@ -231,9 +223,8 @@ namespace rs2
         *
         * \param[in] serial device serial number, as returned by RS2_CAMERA_INFO_SERIAL_NUMBER
         */
-        void enable_device(const std::string& serial)
-        {
-            rs2_error* e = nullptr;
+        void enable_device(const std::string &serial) {
+            rs2_error *e = nullptr;
             rs2_config_enable_device(_config.get(), serial.c_str(), &e);
             error::handle(e);
         }
@@ -246,10 +237,10 @@ namespace rs2
         *
         * \param[in] file_name  The playback file of the device
         */
-        void enable_device_from_file(const std::string& file_name, bool repeat_playback = true)
-        {
-            rs2_error* e = nullptr;
-            rs2_config_enable_device_from_file_repeat_option(_config.get(), file_name.c_str(), repeat_playback, &e);
+        void enable_device_from_file(const std::string &file_name, bool repeat_playback = true) {
+            rs2_error *e = nullptr;
+            rs2_config_enable_device_from_file_repeat_option(_config.get(), file_name.c_str(),
+                                                             repeat_playback, &e);
             error::handle(e);
         }
 
@@ -260,9 +251,8 @@ namespace rs2
         *
         * \param[in] file_name  The desired file for the output record
         */
-        void enable_record_to_file(const std::string& file_name)
-        {
-            rs2_error* e = nullptr;
+        void enable_record_to_file(const std::string &file_name) {
+            rs2_error *e = nullptr;
             rs2_config_enable_record_to_file(_config.get(), file_name.c_str(), &e);
             error::handle(e);
         }
@@ -274,9 +264,8 @@ namespace rs2
         *
         * \param[in] stream    Stream type, for which the filters are cleared
         */
-        void disable_stream(rs2_stream stream, int index = -1)
-        {
-            rs2_error* e = nullptr;
+        void disable_stream(rs2_stream stream, int index = -1) {
+            rs2_error *e = nullptr;
             rs2_config_disable_indexed_stream(_config.get(), stream, index, &e);
             error::handle(e);
         }
@@ -286,9 +275,8 @@ namespace rs2
         * The streams can still be enabled due to pipeline computer vision module request. This call removes any filter on the
         * streams configuration.
         */
-        void disable_all_streams()
-        {
-            rs2_error* e = nullptr;
+        void disable_all_streams() {
+            rs2_error *e = nullptr;
             rs2_config_disable_all_streams(_config.get(), &e);
             error::handle(e);
         }
@@ -311,12 +299,11 @@ namespace rs2
         * \param[in] p  The pipeline for which the selected filters are applied
         * \return       A matching device and streams profile, which satisfies the filters and pipeline requests.
         */
-        pipeline_profile resolve(std::shared_ptr<rs2_pipeline> p) const
-        {
-            rs2_error* e = nullptr;
+        pipeline_profile resolve(std::shared_ptr <rs2_pipeline> p) const {
+            rs2_error *e = nullptr;
             auto profile = std::shared_ptr<rs2_pipeline_profile>(
-                rs2_config_resolve(_config.get(), p.get(), &e),
-                rs2_delete_pipeline_profile);
+                    rs2_config_resolve(_config.get(), p.get(), &e),
+                    rs2_delete_pipeline_profile);
 
             error::handle(e);
             return pipeline_profile(profile);
@@ -329,26 +316,25 @@ namespace rs2
         * \param[in] p  The pipeline for which the selected filters are applied
         * \return       True if a valid profile selection exists, false if no selection can be found under the config filters and the available devices.
         */
-        bool can_resolve(std::shared_ptr<rs2_pipeline> p) const
-        {
-            rs2_error* e = nullptr;
+        bool can_resolve(std::shared_ptr <rs2_pipeline> p) const {
+            rs2_error *e = nullptr;
             int res = rs2_config_can_resolve(_config.get(), p.get(), &e);
             error::handle(e);
             return res != 0;
         }
 
-        std::shared_ptr<rs2_config> get() const
-        {
-            return _config;
-        }
-        explicit operator std::shared_ptr<rs2_config>() const
-        {
+        std::shared_ptr <rs2_config> get() const {
             return _config;
         }
 
-        config(std::shared_ptr<rs2_config> cfg) : _config(cfg) {}
+        explicit operator std::shared_ptr<rs2_config>() const {
+            return _config;
+        }
+
+        config(std::shared_ptr <rs2_config> cfg) : _config(cfg) {}
+
     private:
-        std::shared_ptr<rs2_config> _config;
+        std::shared_ptr <rs2_config> _config;
     };
 
     /**
@@ -359,8 +345,7 @@ namespace rs2
     * The pipeline is the consumer of the processing block interface, while the application consumes the
     * computer vision interface.
     */
-    class pipeline
-    {
+    class pipeline {
     public:
 
         /**
@@ -369,12 +354,11 @@ namespace rs2
         *
         * \param[in] ctx   The context allocated by the application. Using the platform context by default.
         */
-        pipeline(context ctx = context())
-        {
-            rs2_error* e = nullptr;
+        pipeline(context ctx = context()) {
+            rs2_error *e = nullptr;
             _pipeline = std::shared_ptr<rs2_pipeline>(
-                rs2_create_pipeline(ctx._context.get(), &e),
-                rs2_delete_pipeline);
+                    rs2_create_pipeline(ctx._context.get(), &e),
+                    rs2_delete_pipeline);
             error::handle(e);
         }
 
@@ -389,12 +373,11 @@ namespace rs2
         *
         * \return             The actual pipeline device and streams profile, which was successfully configured to the streaming device.
         */
-        pipeline_profile start()
-        {
-            rs2_error* e = nullptr;
+        pipeline_profile start() {
+            rs2_error *e = nullptr;
             auto p = std::shared_ptr<rs2_pipeline_profile>(
-                rs2_pipeline_start(_pipeline.get(), &e),
-                rs2_delete_pipeline_profile);
+                    rs2_pipeline_start(_pipeline.get(), &e),
+                    rs2_delete_pipeline_profile);
 
             error::handle(e);
             return pipeline_profile(p);
@@ -418,12 +401,11 @@ namespace rs2
         * \param[in] config   A rs2::config with requested filters on the pipeline configuration. By default no filters are applied.
         * \return             The actual pipeline device and streams profile, which was successfully configured to the streaming device.
         */
-        pipeline_profile start(const config& config)
-        {
-            rs2_error* e = nullptr;
+        pipeline_profile start(const config &config) {
+            rs2_error *e = nullptr;
             auto p = std::shared_ptr<rs2_pipeline_profile>(
-                rs2_pipeline_start_with_config(_pipeline.get(), config.get().get(), &e),
-                rs2_delete_pipeline_profile);
+                    rs2_pipeline_start_with_config(_pipeline.get(), config.get().get(), &e),
+                    rs2_delete_pipeline_profile);
 
             error::handle(e);
             return pipeline_profile(p);
@@ -439,12 +421,12 @@ namespace rs2
         * \return               The actual pipeline device and streams profile, which was successfully configured to the streaming device.
         */
         template<class S>
-        pipeline_profile start(S callback)
-        {
-            rs2_error* e = nullptr;
+        pipeline_profile start(S callback) {
+            rs2_error *e = nullptr;
             auto p = std::shared_ptr<rs2_pipeline_profile>(
-                rs2_pipeline_start_with_callback_cpp(_pipeline.get(), new frame_callback<S>(callback), &e),
-                rs2_delete_pipeline_profile);
+                    rs2_pipeline_start_with_callback_cpp(_pipeline.get(),
+                                                         new frame_callback<S>(callback), &e),
+                    rs2_delete_pipeline_profile);
 
             error::handle(e);
             return pipeline_profile(p);
@@ -467,12 +449,14 @@ namespace rs2
         * \return               The actual pipeline device and streams profile, which was successfully configured to the streaming device.
         */
         template<class S>
-        pipeline_profile start(const config& config, S callback)
-        {
-            rs2_error* e = nullptr;
+        pipeline_profile start(const config &config, S callback) {
+            rs2_error *e = nullptr;
             auto p = std::shared_ptr<rs2_pipeline_profile>(
-                rs2_pipeline_start_with_config_and_callback_cpp(_pipeline.get(), config.get().get(), new frame_callback<S>(callback), &e),
-                rs2_delete_pipeline_profile);
+                    rs2_pipeline_start_with_config_and_callback_cpp(_pipeline.get(),
+                                                                    config.get().get(),
+                                                                    new frame_callback<S>(callback),
+                                                                    &e),
+                    rs2_delete_pipeline_profile);
 
             error::handle(e);
             return pipeline_profile(p);
@@ -485,9 +469,8 @@ namespace rs2
         * frame reference it owns.
         * The method takes effect only after \c start() was called, otherwise an exception is raised.
         */
-        void stop()
-        {
-            rs2_error* e = nullptr;
+        void stop() {
+            rs2_error *e = nullptr;
             rs2_pipeline_stop(_pipeline.get(), &e);
             error::handle(e);
         }
@@ -507,9 +490,8 @@ namespace rs2
         * \param[in] timeout_ms   Max time in milliseconds to wait until an exception will be thrown
         * \return                 Set of time synchronized frames, one from each active stream
         */
-        frameset wait_for_frames(unsigned int timeout_ms = RS2_DEFAULT_TIMEOUT) const
-        {
-            rs2_error* e = nullptr;
+        frameset wait_for_frames(unsigned int timeout_ms = RS2_DEFAULT_TIMEOUT) const {
+            rs2_error *e = nullptr;
             frame f(rs2_pipeline_wait_for_frames(_pipeline.get(), timeout_ms, &e));
             error::handle(e);
 
@@ -530,14 +512,12 @@ namespace rs2
         * \param[out] f     Frames set handle
         * \return           True if new set of time synchronized frames was stored to f, false if no new frames set is available
         */
-        bool poll_for_frames(frameset* f) const
-        {
-            if (!f)
-            {
+        bool poll_for_frames(frameset *f) const {
+            if (!f) {
                 throw std::invalid_argument("null frameset");
             }
-            rs2_error* e = nullptr;
-            rs2_frame* frame_ref = nullptr;
+            rs2_error *e = nullptr;
+            rs2_frame *frame_ref = nullptr;
             auto res = rs2_pipeline_poll_for_frames(_pipeline.get(), &frame_ref, &e);
             error::handle(e);
 
@@ -545,15 +525,14 @@ namespace rs2
             return res > 0;
         }
 
-        bool try_wait_for_frames(frameset* f, unsigned int timeout_ms = RS2_DEFAULT_TIMEOUT) const
-        {
-            if (!f)
-            {
+        bool try_wait_for_frames(frameset *f, unsigned int timeout_ms = RS2_DEFAULT_TIMEOUT) const {
+            if (!f) {
                 throw std::invalid_argument("null frameset");
             }
-            rs2_error* e = nullptr;
-            rs2_frame* frame_ref = nullptr;
-            auto res = rs2_pipeline_try_wait_for_frames(_pipeline.get(), &frame_ref, timeout_ms, &e);
+            rs2_error *e = nullptr;
+            rs2_frame *frame_ref = nullptr;
+            auto res = rs2_pipeline_try_wait_for_frames(_pipeline.get(), &frame_ref, timeout_ms,
+                                                        &e);
             error::handle(e);
             if (res) *f = frameset(frame(frame_ref));
             return res > 0;
@@ -568,25 +547,25 @@ namespace rs2
         *
         * \return  The actual pipeline device and streams profile, which was successfully configured to the streaming device on start.
         */
-        pipeline_profile get_active_profile() const
-        {
-            rs2_error* e = nullptr;
+        pipeline_profile get_active_profile() const {
+            rs2_error *e = nullptr;
             auto p = std::shared_ptr<rs2_pipeline_profile>(
-                rs2_pipeline_get_active_profile(_pipeline.get(), &e),
-                rs2_delete_pipeline_profile);
+                    rs2_pipeline_get_active_profile(_pipeline.get(), &e),
+                    rs2_delete_pipeline_profile);
 
             error::handle(e);
             return pipeline_profile(p);
         }
 
-        operator std::shared_ptr<rs2_pipeline>() const
-        {
+        operator std::shared_ptr<rs2_pipeline>() const {
             return _pipeline;
         }
-        explicit pipeline(std::shared_ptr<rs2_pipeline> ptr) : _pipeline(ptr) {}
+
+        explicit pipeline(std::shared_ptr <rs2_pipeline> ptr) : _pipeline(ptr) {}
 
     private:
-        std::shared_ptr<rs2_pipeline> _pipeline;
+        std::shared_ptr <rs2_pipeline> _pipeline;
+
         friend class config;
     };
 }

@@ -12,9 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger
  * face enroll job callback wrapper on UI
  */
 class FaceDetectJob(private var uiListener: Listener) :
-    FaceDetector.DataListener,
-    FaceDetector.OptionListener,
-    FaceDetector.StatusListener {
+        FaceDetector.DataListener,
+        FaceDetector.OptionListener,
+        FaceDetector.StatusListener {
 
     private val noneFaceCount = AtomicInteger()
 

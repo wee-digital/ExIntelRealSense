@@ -11,8 +11,7 @@
 
 #include <stdint.h>
 
-typedef struct
-{
+typedef struct {
     uint32_t plusIncrement;
     uint32_t minusDecrement;
     uint32_t deepSeaMedianThreshold;
@@ -23,18 +22,16 @@ typedef struct
     uint32_t deepSeaSecondPeakThreshold;
     uint32_t deepSeaNeighborThreshold;
     uint32_t lrAgreeThreshold;
-}STDepthControlGroup;
+} STDepthControlGroup;
 
-typedef struct
-{
+typedef struct {
     uint32_t rsmBypass;
-    float    diffThresh;
-    float    sloRauDiffThresh;
+    float diffThresh;
+    float sloRauDiffThresh;
     uint32_t removeThresh;
-}STRsm;
+} STRsm;
 
-typedef struct
-{
+typedef struct {
     uint32_t minWest;
     uint32_t minEast;
     uint32_t minWEsum;
@@ -43,89 +40,79 @@ typedef struct
     uint32_t minNSsum;
     uint32_t uShrink;
     uint32_t vShrink;
-}STRauSupportVectorControl;
+} STRauSupportVectorControl;
 
-typedef struct
-{
+typedef struct {
     uint32_t disableSADColor;
     uint32_t disableRAUColor;
     uint32_t disableSLORightColor;
     uint32_t disableSLOLeftColor;
     uint32_t disableSADNormalize;
-}STColorControl;
+} STColorControl;
 
-typedef struct
-{
+typedef struct {
     uint32_t rauDiffThresholdRed;
     uint32_t rauDiffThresholdGreen;
     uint32_t rauDiffThresholdBlue;
-}STRauColorThresholdsControl;
+} STRauColorThresholdsControl;
 
-typedef struct
-{
+typedef struct {
     uint32_t diffThresholdRed;
     uint32_t diffThresholdGreen;
     uint32_t diffThresholdBlue;
-}STSloColorThresholdsControl;
+} STSloColorThresholdsControl;
 
-typedef struct
-{
+typedef struct {
     uint32_t sloK1Penalty;
     uint32_t sloK2Penalty;
     uint32_t sloK1PenaltyMod1;
     uint32_t sloK2PenaltyMod1;
     uint32_t sloK1PenaltyMod2;
     uint32_t sloK2PenaltyMod2;
-}STSloPenaltyControl;
+} STSloPenaltyControl;
 
 
-typedef struct
-{
-    float    lambdaCensus;
-    float    lambdaAD;
+typedef struct {
+    float lambdaCensus;
+    float lambdaAD;
     uint32_t ignoreSAD;
-}STHdad;
+} STHdad;
 
-typedef struct
-{
-    float    colorCorrection1;
-    float    colorCorrection2;
-    float    colorCorrection3;
-    float    colorCorrection4;
-    float    colorCorrection5;
-    float    colorCorrection6;
-    float    colorCorrection7;
-    float    colorCorrection8;
-    float    colorCorrection9;
-    float    colorCorrection10;
-    float    colorCorrection11;
-    float    colorCorrection12;
-}STColorCorrection;
+typedef struct {
+    float colorCorrection1;
+    float colorCorrection2;
+    float colorCorrection3;
+    float colorCorrection4;
+    float colorCorrection5;
+    float colorCorrection6;
+    float colorCorrection7;
+    float colorCorrection8;
+    float colorCorrection9;
+    float colorCorrection10;
+    float colorCorrection11;
+    float colorCorrection12;
+} STColorCorrection;
 
-typedef struct
-{
+typedef struct {
     uint32_t meanIntensitySetPoint;
-}STAEControl;
+} STAEControl;
 
-typedef struct
-{
+typedef struct {
     uint32_t depthUnits;
-    int32_t  depthClampMin;
-    int32_t  depthClampMax;
+    int32_t depthClampMin;
+    int32_t depthClampMax;
     uint32_t disparityMode;
-    int32_t  disparityShift;
-}STDepthTableControl;
+    int32_t disparityShift;
+} STDepthTableControl;
 
-typedef struct
-{
+typedef struct {
     uint32_t uDiameter;
     uint32_t vDiameter;
-}STCensusRadius;
+} STCensusRadius;
 
-typedef struct
-{
-    float   amplitude;
-}STAFactor;
+typedef struct {
+    float amplitude;
+} STAFactor;
 
 #ifdef __cplusplus
 extern "C"{

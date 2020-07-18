@@ -48,13 +48,13 @@ extern "C" {
 * \param[out] error  if non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return size of rs2_raw_data_buffer
 */
-int rs2_get_raw_data_size(const rs2_raw_data_buffer* buffer, rs2_error** error);
+int rs2_get_raw_data_size(const rs2_raw_data_buffer *buffer, rs2_error **error);
 
 /**
 * Delete rs2_raw_data_buffer
 * \param[in] buffer        rs2_raw_data_buffer returned by rs2_send_and_receive_raw_data
 */
-void rs2_delete_raw_data(const rs2_raw_data_buffer* buffer);
+void rs2_delete_raw_data(const rs2_raw_data_buffer *buffer);
 
 /**
 * Retrieve char array from rs2_raw_data_buffer
@@ -62,28 +62,33 @@ void rs2_delete_raw_data(const rs2_raw_data_buffer* buffer);
 * \param[out] error   if non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return raw data
 */
-const unsigned char* rs2_get_raw_data(const rs2_raw_data_buffer* buffer, rs2_error** error);
+const unsigned char *rs2_get_raw_data(const rs2_raw_data_buffer *buffer, rs2_error **error);
 
 /**
  * Retrieve the API version from the source code. Evaluate that the value is conformant to the established policies
  * \param[out] error  if non-null, receives any error that occurs during this call, otherwise, errors are ignored
  * \return            the version API encoded into integer value "1.9.3" -> 10903
  */
-int rs2_get_api_version(rs2_error** error);
+int rs2_get_api_version(rs2_error **error);
 
-void rs2_log_to_console(rs2_log_severity min_severity, rs2_error ** error);
+void rs2_log_to_console(rs2_log_severity min_severity, rs2_error **error);
 
-void rs2_log_to_file(rs2_log_severity min_severity, const char * file_path, rs2_error ** error);
+void rs2_log_to_file(rs2_log_severity min_severity, const char *file_path, rs2_error **error);
 
-void rs2_log_to_callback_cpp( rs2_log_severity min_severity, rs2_log_callback * callback, rs2_error ** error );
+void rs2_log_to_callback_cpp(rs2_log_severity min_severity, rs2_log_callback *callback,
+                             rs2_error **error);
 
-void rs2_log_to_callback( rs2_log_severity min_severity, rs2_log_callback_ptr callback, void * arg, rs2_error** error );
+void rs2_log_to_callback(rs2_log_severity min_severity, rs2_log_callback_ptr callback, void *arg,
+                         rs2_error **error);
 
 
-unsigned rs2_get_log_message_line_number( rs2_log_message const * msg, rs2_error** error );
-const char * rs2_get_log_message_filename( rs2_log_message const * msg, rs2_error** error );
-const char * rs2_get_raw_log_message( rs2_log_message const * msg, rs2_error** error );
-const char * rs2_get_full_log_message( rs2_log_message const * msg, rs2_error** error );
+unsigned rs2_get_log_message_line_number(rs2_log_message const *msg, rs2_error **error);
+
+const char *rs2_get_log_message_filename(rs2_log_message const *msg, rs2_error **error);
+
+const char *rs2_get_raw_log_message(rs2_log_message const *msg, rs2_error **error);
+
+const char *rs2_get_full_log_message(rs2_log_message const *msg, rs2_error **error);
 
 /**
  * Add custom message into librealsense log
@@ -91,7 +96,7 @@ const char * rs2_get_full_log_message( rs2_log_message const * msg, rs2_error** 
  * \param[in] message   Message to be logged
  * \param[out] error  if non-null, receives any error that occurs during this call, otherwise, errors are ignored
  */
-void rs2_log(rs2_log_severity severity, const char * message, rs2_error ** error);
+void rs2_log(rs2_log_severity severity, const char *message, rs2_error **error);
 
 /**
 * Given the 2D depth coordinate (x,y) provide the corresponding depth in metric units
@@ -99,14 +104,14 @@ void rs2_log(rs2_log_severity severity, const char * message, rs2_error ** error
 * \param[in] x,y  2D depth pixel coordinates (Left-Upper corner origin)
 * \param[out] error  if non-null, receives any error that occurs during this call, otherwise, errors are ignored
 */
-float rs2_depth_frame_get_distance(const rs2_frame* frame_ref, int x, int y, rs2_error** error);
+float rs2_depth_frame_get_distance(const rs2_frame *frame_ref, int x, int y, rs2_error **error);
 
 /**
 * return the time at specific time point
 * \param[out] error  if non-null, receives any error that occurs during this call, otherwise, errors are ignored
 * \return            the time at specific time point, in live and record mode it will return the system time and in playback mode it will return the recorded time
 */
-rs2_time_t rs2_get_time( rs2_error** error);
+rs2_time_t rs2_get_time(rs2_error **error);
 
 #ifdef __cplusplus
 }

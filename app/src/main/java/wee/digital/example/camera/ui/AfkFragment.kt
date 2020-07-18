@@ -1,4 +1,4 @@
-package wee.digital.example.ui
+package wee.digital.example.camera.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import wee.digital.camera.addFragment
 import wee.digital.camera.remove
-import wee.digital.example.R
+import wee.digital.example.camera.R
 
 class AfkFragment private constructor() : Fragment() {
 

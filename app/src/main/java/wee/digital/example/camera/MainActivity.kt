@@ -1,4 +1,4 @@
-package wee.digital.example
+package wee.digital.example.camera
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -7,8 +7,8 @@ import wee.digital.camera.ColorSensor
 import wee.digital.camera.DepthSensor
 import wee.digital.camera.RealSense
 import wee.digital.camera.replaceFragment
-import wee.digital.example.ui.AutoEnrollFragment
-import wee.digital.example.ui.DetectFragment
+import wee.digital.example.camera.ui.AutoEnrollFragment
+import wee.digital.example.camera.ui.DetectFragment
 
 
 class MainActivity : AppCompatActivity() {

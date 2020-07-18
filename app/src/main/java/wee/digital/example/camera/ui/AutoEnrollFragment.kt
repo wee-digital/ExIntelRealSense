@@ -1,4 +1,4 @@
-package wee.digital.example.ui
+package wee.digital.example.camera.ui
 
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -12,7 +12,7 @@ import wee.digital.camera.ColorSensor
 import wee.digital.camera.RealSense
 import wee.digital.camera.job.AutoDetectJob
 import wee.digital.camera.job.FaceDetectJob
-import wee.digital.example.R
+import wee.digital.example.camera.R
 
 class AutoEnrollFragment : Fragment(),
         AutoDetectJob.Listener {

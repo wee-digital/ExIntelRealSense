@@ -1,4 +1,4 @@
-package wee.digital.example.ui
+package wee.digital.example.camera.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.detect.*
-import wee.digital.example.R
+import wee.digital.example.camera.R
 
 
 class DetectFragment : Fragment() {

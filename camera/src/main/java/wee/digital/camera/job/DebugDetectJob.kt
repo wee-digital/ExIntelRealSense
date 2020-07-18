@@ -11,9 +11,9 @@ import wee.digital.camera.detector.FaceDetector
  * simple callback wrapper on UI
  */
 class DebugDetectJob(private var uiListener: UiListener) :
-    FaceDetector.OptionListener,
-    FaceDetector.DataListener,
-    FaceDetector.StatusListener {
+        FaceDetector.OptionListener,
+        FaceDetector.DataListener,
+        FaceDetector.StatusListener {
 
     interface UiListener : FaceDetector.OptionListener, FaceDetector.DataListener,
             FaceDetector.StatusListener

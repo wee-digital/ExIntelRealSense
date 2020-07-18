@@ -26,8 +26,8 @@ class CameraView : ConstraintLayout {
     }
 
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
+            context,
+            attrs,
             defStyleAttr
     ) {
         onViewInit(context)

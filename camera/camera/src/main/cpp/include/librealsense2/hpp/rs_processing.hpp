@@ -8,15 +8,13 @@
 #include "rs_frame.hpp"
 #include "rs_options.hpp"
 
-namespace rs2
-{
+namespace rs2 {
     /**
     * The source used to generate frames, which is usually done by the low level driver for each sensor. frame_source is one of the parameters
     * of processing_block's callback function, which can be used to re-generate the frame and via frame_ready invoke another callback function
     * to notify application frame is ready. Please refer to "video_processing_thread" code snippet in rs-measure.cpp for a detailed usage example.
     */
-    class frame_source
-    {
+    class frame_source {
     public:
         /**
         * Allocate a new video frame with given params
@@ -30,17 +28,18 @@ namespace rs2
         * \param[in] frame_type  Which frame type are going to create.
         * \return   The allocated frame
         */
-        frame allocate_video_frame(const stream_profile& profile,
-            const frame& original,
-            int new_bpp = 0,
-            int new_width = 0,
-            int new_height = 0,
-            int new_stride = 0,
-            rs2_extension frame_type = RS2_EXTENSION_VIDEO_FRAME) const
-        {
-            rs2_error* e = nullptr;
+        frame allocate_video_frame(const stream_profile &profile,
+                                   const frame &original,
+                                   int new_bpp = 0,
+                                   int new_width = 0,
+                                   int new_height = 0,
+                                   int new_stride = 0,
+                                   rs2_extension frame_type = RS2_EXTENSION_VIDEO_FRAME) const {
+            rs2_error *e = nullptr;
             auto result = rs2_allocate_synthetic_video_frame(_source, profile.get(),
-                original.get(), new_bpp, new_width, new_height, new_stride, frame_type, &e);
+                                                             original.get(), new_bpp, new_width,
+                                                             new_height, new_stride, frame_type,
+                                                             &e);
             error::handle(e);
             return result;
         }
@@ -53,21 +52,19 @@ namespace rs2
         * \param[in] frame_type  Which frame type are going to create.
         * \return   The allocated frame
         */
-        frame allocate_motion_frame(const stream_profile& profile,
-            const frame& original,
-            rs2_extension frame_type = RS2_EXTENSION_MOTION_FRAME) const
-        {
-            rs2_error* e = nullptr;
+        frame allocate_motion_frame(const stream_profile &profile,
+                                    const frame &original,
+                                    rs2_extension frame_type = RS2_EXTENSION_MOTION_FRAME) const {
+            rs2_error *e = nullptr;
             auto result = rs2_allocate_synthetic_motion_frame(_source, profile.get(),
-                original.get(), frame_type, &e);
+                                                              original.get(), frame_type, &e);
             error::handle(e);
             return result;
         }
 
-        frame allocate_points(const stream_profile& profile,
-            const frame& original) const
-        {
-            rs2_error* e = nullptr;
+        frame allocate_points(const stream_profile &profile,
+                              const frame &original) const {
+            rs2_error *e = nullptr;
             auto result = rs2_allocate_points(_source, profile.get(), original.get(), &e);
             error::handle(e);
             return result;
@@ -79,50 +76,49 @@ namespace rs2
         * \param[in] frames      Frame vecotor used to create composite frame, the size of composite frame will be the same as vector size.
         * \return    The allocated composite frame
         */
-        frame allocate_composite_frame(std::vector<frame> frames) const
-        {
-            rs2_error* e = nullptr;
+        frame allocate_composite_frame(std::vector <frame> frames) const {
+            rs2_error *e = nullptr;
 
-            std::vector<rs2_frame*> refs(frames.size(), (rs2_frame*)nullptr);
+            std::vector < rs2_frame * > refs(frames.size(), (rs2_frame *) nullptr);
             for (size_t i = 0; i < frames.size(); i++)
                 std::swap(refs[i], frames[i].frame_ref);
 
-            auto result = rs2_allocate_composite_frame(_source, refs.data(), (int)refs.size(), &e);
+            auto result = rs2_allocate_composite_frame(_source, refs.data(), (int) refs.size(), &e);
             error::handle(e);
             return result;
         }
+
         /**
         * Invoke the callback funtion informing the frame is ready.
         *
         * \param[in] frames      frame to send to callback function.
         */
-        void frame_ready(frame result) const
-        {
-            rs2_error* e = nullptr;
+        void frame_ready(frame result) const {
+            rs2_error *e = nullptr;
             rs2_synthetic_frame_ready(_source, result.get(), &e);
             error::handle(e);
             result.frame_ref = nullptr;
         }
 
-        rs2_source* _source;
+        rs2_source *_source;
     private:
         template<class T>
-        friend class frame_processor_callback;
+        friend
+        class frame_processor_callback;
 
-        frame_source(rs2_source* source) : _source(source) {}
-        frame_source(const frame_source&) = delete;
+        frame_source(rs2_source *source) : _source(source) {}
+
+        frame_source(const frame_source &) = delete;
 
     };
 
     template<class T>
-    class frame_processor_callback : public rs2_frame_processor_callback
-    {
+    class frame_processor_callback : public rs2_frame_processor_callback {
         T on_frame_function;
     public:
         explicit frame_processor_callback(T on_frame) : on_frame_function(on_frame) {}
 
-        void on_frame(rs2_frame* f, rs2_source * source) override
-        {
+        void on_frame(rs2_frame *f, rs2_source *source) override {
             frame_source src(source);
             frame frm(f);
             on_frame_function(std::move(frm), src);
@@ -131,8 +127,7 @@ namespace rs2
         void release() override { delete this; }
     };
 
-    class frame_queue
-    {
+    class frame_queue {
     public:
         /**
         * create frame queue. frame queues are the simplest x-platform synchronization primitive provided by librealsense
@@ -140,12 +135,12 @@ namespace rs2
         * param[in] capacity size of the frame queue
         * param[in] keep_frames  if set to true, the queue automatically calls keep() on every frame enqueued into it.
         */
-        explicit frame_queue(unsigned int capacity, bool keep_frames = false) : _capacity(capacity), _keep(keep_frames)
-        {
-            rs2_error* e = nullptr;
+        explicit frame_queue(unsigned int capacity, bool keep_frames = false) : _capacity(capacity),
+                                                                                _keep(keep_frames) {
+            rs2_error *e = nullptr;
             _queue = std::shared_ptr<rs2_frame_queue>(
-                rs2_create_frame_queue(capacity, &e),
-                rs2_delete_frame_queue);
+                    rs2_create_frame_queue(capacity, &e),
+                    rs2_delete_frame_queue);
             error::handle(e);
         }
 
@@ -155,8 +150,7 @@ namespace rs2
         * enqueue new frame into the queue
         * \param[in] f - frame handle to enqueue (this operation passed ownership to the queue)
         */
-        void enqueue(frame f) const
-        {
+        void enqueue(frame f) const {
             if (_keep) f.keep();
             rs2_enqueue_frame(f.frame_ref, _queue.get()); // noexcept
             f.frame_ref = nullptr; // frame has been essentially moved from
@@ -166,12 +160,11 @@ namespace rs2
         * wait until new frame becomes available in the queue and dequeue it
         * \return frame handle to be released using rs2_release_frame
         */
-        frame wait_for_frame(unsigned int timeout_ms = 5000) const
-        {
-            rs2_error* e = nullptr;
+        frame wait_for_frame(unsigned int timeout_ms = 5000) const {
+            rs2_error *e = nullptr;
             auto frame_ref = rs2_wait_for_frame(_queue.get(), timeout_ms, &e);
             error::handle(e);
-            return{ frame_ref };
+            return {frame_ref};
         }
 
         /**
@@ -180,35 +173,36 @@ namespace rs2
         * \return true if new frame was stored to f
         */
         template<typename T>
-        typename std::enable_if<std::is_base_of<rs2::frame, T>::value, bool>::type poll_for_frame(T* output) const
-        {
-            rs2_error* e = nullptr;
-            rs2_frame* frame_ref = nullptr;
+        typename std::enable_if<std::is_base_of<rs2::frame, T>::value, bool>::type
+        poll_for_frame(T *output) const {
+            rs2_error *e = nullptr;
+            rs2_frame *frame_ref = nullptr;
             auto res = rs2_poll_for_frame(_queue.get(), &frame_ref, &e);
             error::handle(e);
-            frame f{ frame_ref };
+            frame f{frame_ref};
             if (res) *output = f;
             return res > 0;
         }
 
         template<typename T>
-        typename std::enable_if<std::is_base_of<rs2::frame, T>::value, bool>::type try_wait_for_frame(T* output, unsigned int timeout_ms = 5000) const
-        {
-            rs2_error* e = nullptr;
-            rs2_frame* frame_ref = nullptr;
+        typename std::enable_if<std::is_base_of<rs2::frame, T>::value, bool>::type
+        try_wait_for_frame(T *output, unsigned int timeout_ms = 5000) const {
+            rs2_error *e = nullptr;
+            rs2_frame *frame_ref = nullptr;
             auto res = rs2_try_wait_for_frame(_queue.get(), timeout_ms, &frame_ref, &e);
             error::handle(e);
-            frame f{ frame_ref };
+            frame f{frame_ref};
             if (res) *output = f;
             return res > 0;
         }
+
         /**
         * Does the same thing as enqueue function.
         */
-        void operator()(frame f) const
-        {
+        void operator()(frame f) const {
             enqueue(std::move(f));
         }
+
         /**
         * Return the capacity of the queue
         * \return capacity size
@@ -222,7 +216,7 @@ namespace rs2
         bool keep_frames() const { return _keep; }
 
     private:
-        std::shared_ptr<rs2_frame_queue> _queue;
+        std::shared_ptr <rs2_frame_queue> _queue;
         size_t _capacity;
         bool _keep;
     };
@@ -230,8 +224,7 @@ namespace rs2
     /**
     * Define the processing block flow, inherit this class to generate your own processing_block. Please refer to the viewer class in examples.hpp for a detailed usage example.
     */
-    class processing_block : public options
-    {
+    class processing_block : public options {
     public:
         using options::supports;
 
@@ -241,12 +234,12 @@ namespace rs2
         * \param[in] on_frame      callback function for notifying the frame to be processed is ready.
         */
         template<class S>
-        void start(S on_frame)
-        {
-            rs2_error* e = nullptr;
+        void start(S on_frame) {
+            rs2_error *e = nullptr;
             rs2_start_processing(get(), new frame_callback<S>(on_frame), &e);
             error::handle(e);
         }
+
         /**
         * Does the same thing as "start" function
         *
@@ -254,33 +247,32 @@ namespace rs2
         * \return address of callback function.
         */
         template<class S>
-        S& operator>>(S& on_frame)
-        {
+        S &operator>>(S &on_frame) {
             start(on_frame);
             return on_frame;
         }
+
         /**
         * Ask processing block to process the frame
         *
         * \param[in] on_frame      frame to be processed.
         */
-        void invoke(frame f) const
-        {
-            rs2_frame* ptr = nullptr;
+        void invoke(frame f) const {
+            rs2_frame *ptr = nullptr;
             std::swap(f.frame_ref, ptr);
 
-            rs2_error* e = nullptr;
+            rs2_error *e = nullptr;
             rs2_process_frame(get(), ptr, &e);
             error::handle(e);
         }
+
         /**
         * constructor with already created low level processing block assigned.
         *
         * \param[in] block - low level rs2_processing_block created before.
         */
-        processing_block(std::shared_ptr<rs2_processing_block> block)
-            : options((rs2_options*)block.get()), _block(block)
-        {
+        processing_block(std::shared_ptr <rs2_processing_block> block)
+                : options((rs2_options *) block.get()), _block(block) {
         }
 
         /**
@@ -289,27 +281,27 @@ namespace rs2
         * \param[in] processing_function - function pointer of on_frame function in rs2_frame_processor_callback structure, which will be called back by invoke function .
         */
         template<class S>
-        processing_block(S processing_function)
-        {
-            rs2_error* e = nullptr;
+        processing_block(S processing_function) {
+            rs2_error *e = nullptr;
             _block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_processing_block(new frame_processor_callback<S>(processing_function), &e),
-                rs2_delete_processing_block);
+                    rs2_create_processing_block(
+                            new frame_processor_callback<S>(processing_function), &e),
+                    rs2_delete_processing_block);
             options::operator=(_block);
             error::handle(e);
         }
 
-        operator rs2_options*() const { return (rs2_options*)get(); }
-        rs2_processing_block* get() const { return _block.get(); }
+        operator rs2_options *() const { return (rs2_options *) get(); }
+
+        rs2_processing_block *get() const { return _block.get(); }
 
         /**
         * Check if a specific camera info field is supported.
         * \param[in] info    the parameter to check for support
         * \return            true if the parameter both exists and well-defined for the specific processing_block
         */
-        bool supports(rs2_camera_info info) const
-        {
-            rs2_error* e = nullptr;
+        bool supports(rs2_camera_info info) const {
+            rs2_error *e = nullptr;
             auto is_supported = rs2_supports_processing_block_info(_block.get(), info, &e);
             error::handle(e);
             return is_supported > 0;
@@ -320,28 +312,29 @@ namespace rs2
         * \param[in] info     camera info type to retrieve
         * \return             the requested camera info string, in a format specific to the processing_block model
         */
-        const char* get_info(rs2_camera_info info) const
-        {
-            rs2_error* e = nullptr;
+        const char *get_info(rs2_camera_info info) const {
+            rs2_error *e = nullptr;
             auto result = rs2_get_processing_block_info(_block.get(), info, &e);
             error::handle(e);
             return result;
         }
+
     protected:
         void register_simple_option(rs2_option option_id, option_range range) {
-            rs2_error * e = nullptr;
+            rs2_error *e = nullptr;
             rs2_processing_block_register_simple_option(_block.get(), option_id,
-                    range.min, range.max, range.step, range.def, &e);
+                                                        range.min, range.max, range.step, range.def,
+                                                        &e);
             error::handle(e);
         }
-        std::shared_ptr<rs2_processing_block> _block;
+
+        std::shared_ptr <rs2_processing_block> _block;
     };
 
     /**
     * Define the filter workflow, inherit this class to generate your own filter. Refer to the viewer class in examples.hpp for a more detailed example.
     */
-    class filter : public processing_block, public filter_interface
-    {
+    class filter : public processing_block, public filter_interface {
     public:
         /**
         * Ask processing block to process the frame and poll the processed frame from internal queue
@@ -349,12 +342,12 @@ namespace rs2
         * \param[in] on_frame      frame to be processed.
         * return processed frame
         */
-        rs2::frame process(rs2::frame frame) const override
-        {
+        rs2::frame process(rs2::frame frame) const override {
             invoke(frame);
             rs2::frame f;
             if (!_queue.poll_for_frame(&f))
-                throw std::runtime_error("Error occured during execution of the processing block! See the log for more info");
+                throw std::runtime_error(
+                        "Error occured during execution of the processing block! See the log for more info");
             return f;
         }
 
@@ -363,10 +356,9 @@ namespace rs2
         *
         * \param[in] block - low level rs2_processing_block created before.
         */
-        filter(std::shared_ptr<rs2_processing_block> block, int queue_size = 1)
-            : processing_block(block),
-            _queue(queue_size)
-        {
+        filter(std::shared_ptr <rs2_processing_block> block, int queue_size = 1)
+                : processing_block(block),
+                  _queue(queue_size) {
             start(_queue);
         }
 
@@ -377,31 +369,30 @@ namespace rs2
         */
         template<class S>
         filter(S processing_function, int queue_size = 1) :
-            processing_block(processing_function),
-            _queue(queue_size)
-        {
+                processing_block(processing_function),
+                _queue(queue_size) {
             start(_queue);
         }
 
 
         frame_queue get_queue() { return _queue; }
-        rs2_processing_block* get() const { return _block.get(); }
+
+        rs2_processing_block *get() const { return _block.get(); }
 
         template<class T>
-        bool is() const
-        {
+        bool is() const {
             T extension(*this);
             return extension;
         }
 
         template<class T>
-        T as() const
-        {
+        T as() const {
             T extension(*this);
             return extension;
         }
 
         operator bool() const { return _block.get() != nullptr; }
+
     protected:
         frame_queue _queue;
     };
@@ -409,48 +400,45 @@ namespace rs2
     /**
     * Generates 3D point clouds based on a depth frame. Can also map textures from a color frame.
     */
-    class pointcloud : public filter
-    {
+    class pointcloud : public filter {
     public:
         /**
         * create pointcloud instance
         */
         pointcloud() : filter(init(), 1) {}
 
-        pointcloud(rs2_stream stream, int index = 0) : filter(init(), 1)
-        {
+        pointcloud(rs2_stream stream, int index = 0) : filter(init(), 1) {
             set_option(RS2_OPTION_STREAM_FILTER, float(stream));
             set_option(RS2_OPTION_STREAM_INDEX_FILTER, float(index));
         }
+
         /**
         * Generate the pointcloud and texture mappings of depth map.
         *
         * \param[in] depth - the depth frame to generate point cloud and texture.
         * \return points instance.
         */
-        points calculate(frame depth)
-        {
+        points calculate(frame depth) {
             auto res = process(depth);
             if (res.as<points>())
                 return res;
 
-            if (auto set = res.as <frameset>())
-            {
-                for (auto f : set)
-                {
-                    if(f.as<points>())
+            if (auto set = res.as<frameset>()) {
+                for (auto f : set) {
+                    if (f.as<points>())
                         return f;
                 }
             }
-            throw std::runtime_error("Error occured during execution of the processing block! See the log for more info");
+            throw std::runtime_error(
+                    "Error occured during execution of the processing block! See the log for more info");
         }
+
         /**
         * Map the point cloud to the given color frame.
         *
         * \param[in] mapped - the frame to be mapped to as texture.
         */
-        void map_to(frame mapped)
-        {
+        void map_to(frame mapped) {
             set_option(RS2_OPTION_STREAM_FILTER, float(mapped.get_profile().stream_type()));
             set_option(RS2_OPTION_STREAM_FORMAT_FILTER, float(mapped.get_profile().format()));
             set_option(RS2_OPTION_STREAM_INDEX_FILTER, float(mapped.get_profile().stream_index()));
@@ -458,18 +446,17 @@ namespace rs2
         }
 
     protected:
-        pointcloud(std::shared_ptr<rs2_processing_block> block) : filter(block, 1) {}
+        pointcloud(std::shared_ptr <rs2_processing_block> block) : filter(block, 1) {}
 
     private:
         friend class context;
 
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
 
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_pointcloud(&e),
-                rs2_delete_processing_block);
+                    rs2_create_pointcloud(&e),
+                    rs2_delete_processing_block);
 
             error::handle(e);
 
@@ -479,8 +466,7 @@ namespace rs2
         }
     };
 
-    class yuy_decoder : public filter
-    {
+    class yuy_decoder : public filter {
     public:
         /**
         * Creates YUY decoder processing block. This block accepts raw YUY frames and outputs frames of other formats.
@@ -490,67 +476,61 @@ namespace rs2
         * The SDK will automatically try to use SSE2 and AVX instructions and CUDA where available to get
         * best performance. Other implementations (using GLSL, OpenCL, Neon and NCS) should follow.
         */
-        yuy_decoder() : filter(init(), 1) { }
+        yuy_decoder() : filter(init(), 1) {}
 
     protected:
-        yuy_decoder(std::shared_ptr<rs2_processing_block> block) : filter(block, 1) {}
+        yuy_decoder(std::shared_ptr <rs2_processing_block> block) : filter(block, 1) {}
 
     private:
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_yuy_decoder(&e),
-                rs2_delete_processing_block);
+                    rs2_create_yuy_decoder(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             return block;
         }
     };
-  
-  class threshold_filter : public filter
-    {
+
+    class threshold_filter : public filter {
     public:
         /**
         * Creates depth thresholding filter
         * By controlling min and max options on the block, one could filter out depth values
         * that are either too large or too small, as a software post-processing step
         */
-        threshold_filter(float min_dist = 0.15f, float max_dist = 4.f) 
-            : filter(init(), 1) 
-        { 
+        threshold_filter(float min_dist = 0.15f, float max_dist = 4.f)
+                : filter(init(), 1) {
             set_option(RS2_OPTION_MIN_DISTANCE, min_dist);
             set_option(RS2_OPTION_MAX_DISTANCE, max_dist);
         }
 
-        threshold_filter(filter f) : filter(f)
-        {
-            rs2_error* e = nullptr;
-            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_THRESHOLD_FILTER, &e) && !e)
-            {
+        threshold_filter(filter f) : filter(f) {
+            rs2_error *e = nullptr;
+            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_THRESHOLD_FILTER,
+                                                       &e) && !e) {
                 _block.reset();
             }
             error::handle(e);
         }
 
     protected:
-        threshold_filter(std::shared_ptr<rs2_processing_block> block) : filter(block, 1) {}
-        
+        threshold_filter(std::shared_ptr <rs2_processing_block> block) : filter(block, 1) {}
+
     private:
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_threshold(&e),
-                rs2_delete_processing_block);
+                    rs2_create_threshold(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             return block;
         }
     };
 
-    class units_transform : public filter
-    {
+    class units_transform : public filter {
     public:
         /**
         * Creates depth units to meters processing block.
@@ -558,23 +538,21 @@ namespace rs2
         units_transform() : filter(init(), 1) {}
 
     protected:
-        units_transform(std::shared_ptr<rs2_processing_block> block) : filter(block, 1) {}
-        
+        units_transform(std::shared_ptr <rs2_processing_block> block) : filter(block, 1) {}
+
     private:
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_units_transform(&e),
-                rs2_delete_processing_block);
+                    rs2_create_units_transform(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             return block;
         }
     };
 
-    class asynchronous_syncer : public processing_block
-    {
+    class asynchronous_syncer : public processing_block {
     public:
         /**
         * Real asynchronous syncer within syncer class
@@ -582,27 +560,24 @@ namespace rs2
         asynchronous_syncer() : processing_block(init()) {}
 
     private:
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_sync_processing_block(&e),
-                rs2_delete_processing_block);
+                    rs2_create_sync_processing_block(&e),
+                    rs2_delete_processing_block);
 
             error::handle(e);
             return block;
         }
     };
 
-    class syncer
-    {
+    class syncer {
     public:
         /**
         * Sync instance to align frames from different streams
         */
         syncer(int queue_size = 1)
-            :_results(queue_size)
-        {
+                : _results(queue_size) {
             _sync.start(_results);
         }
 
@@ -611,8 +586,7 @@ namespace rs2
         * \param[in] timeout_ms   Max time in milliseconds to wait until an exception will be thrown
         * \return Set of coherent frames
         */
-        frameset wait_for_frames(unsigned int timeout_ms = 5000) const
-        {
+        frameset wait_for_frames(unsigned int timeout_ms = 5000) const {
             return frameset(_results.wait_for_frame(timeout_ms));
         }
 
@@ -621,11 +595,9 @@ namespace rs2
         * \param[out] fs      New coherent frame-set
         * \return true if new frame-set was stored to result
         */
-        bool poll_for_frames(frameset* fs) const
-        {
+        bool poll_for_frames(frameset *fs) const {
             frame result;
-            if (_results.poll_for_frame(&result))
-            {
+            if (_results.poll_for_frame(&result)) {
                 *fs = frameset(result);
                 return true;
             }
@@ -638,21 +610,19 @@ namespace rs2
         * \param[out] fs            New coherent frame-set
         * \return true if new frame-set was stored to result
         */
-        bool try_wait_for_frames(frameset* fs, unsigned int timeout_ms = 5000) const
-        {
+        bool try_wait_for_frames(frameset *fs, unsigned int timeout_ms = 5000) const {
             frame result;
-            if (_results.try_wait_for_frame(&result, timeout_ms))
-            {
+            if (_results.try_wait_for_frame(&result, timeout_ms)) {
                 *fs = frameset(result);
                 return true;
             }
             return false;
         }
 
-        void operator()(frame f) const
-        {
+        void operator()(frame f) const {
             _sync.invoke(std::move(f));
         }
+
     private:
         asynchronous_syncer _sync;
         frame_queue _results;
@@ -661,8 +631,7 @@ namespace rs2
     /**
     Auxiliary processing block that performs image alignment using depth data and camera calibration
     */
-    class align : public filter
-    {
+    class align : public filter {
     public:
         /**
         Create align filter
@@ -683,36 +652,35 @@ namespace rs2
         * \param[in] frames      A set of frames, where at least one of which is a depth frame
         * \return Input frames aligned to one another
         */
-        frameset process(frameset frames)
-        {
+        frameset process(frameset frames) {
             return filter::process(frames);
         }
 
     protected:
-        align(std::shared_ptr<rs2_processing_block> block) : filter(block, 1) {}
+        align(std::shared_ptr <rs2_processing_block> block) : filter(block, 1) {}
 
     private:
         friend class context;
-        std::shared_ptr<rs2_processing_block> init(rs2_stream align_to)
-        {
-            rs2_error* e = nullptr;
+
+        std::shared_ptr <rs2_processing_block> init(rs2_stream align_to) {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_align(align_to, &e),
-                rs2_delete_processing_block);
+                    rs2_create_align(align_to, &e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             return block;
         }
     };
 
-    class colorizer : public filter
-    {
+    class colorizer : public filter {
     public:
         /**
         * Create colorizer filter
         * Colorizer generate color image based on input depth frame
         */
-        colorizer() : filter(init(), 1) { }
+        colorizer() : filter(init(), 1) {}
+
         /**
         * Create colorizer processing block
         * Colorizer generate color image base on input depth frame
@@ -728,30 +696,28 @@ namespace rs2
         *                           8 - Pattern
         *                           9 - Hue
         */
-        colorizer(float color_scheme) : filter(init(), 1)
-        {
+        colorizer(float color_scheme) : filter(init(), 1) {
             set_option(RS2_OPTION_COLOR_SCHEME, float(color_scheme));
         }
+
         /**
         * Start to generate color image base on depth frame
         * \param[in] depth - depth frame to be processed to generate the color image
         * \return video_frame - generated color image
         */
-        video_frame colorize(frame depth) const
-        {
+        video_frame colorize(frame depth) const {
             return process(depth);
         }
 
     protected:
-        colorizer(std::shared_ptr<rs2_processing_block> block) : filter(block, 1) {}
+        colorizer(std::shared_ptr <rs2_processing_block> block) : filter(block, 1) {}
 
     private:
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_colorizer(&e),
-                rs2_delete_processing_block);
+                    rs2_create_colorizer(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             // Redirect options API to the processing block
@@ -761,43 +727,40 @@ namespace rs2
         }
     };
 
-    class decimation_filter : public filter
-    {
+    class decimation_filter : public filter {
     public:
         /**
         * Create decimation filter
         * Decimation filter performs downsampling by using the median with specific kernel size
         */
         decimation_filter() : filter(init(), 1) {}
+
         /**
         * Create decimation filter
         * Decimation filter performs downsampling by using the median with specific kernel size
         * \param[in] magnitude - number of filter iterations.
         */
-        decimation_filter(float magnitude) : filter(init(), 1)
-        {
+        decimation_filter(float magnitude) : filter(init(), 1) {
             set_option(RS2_OPTION_FILTER_MAGNITUDE, magnitude);
         }
 
-        decimation_filter(filter f) : filter(f)
-        {
-             rs2_error* e = nullptr;
-             if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_DECIMATION_FILTER, &e) && !e)
-             {
-                 _block.reset();
-             }
-             error::handle(e);
+        decimation_filter(filter f) : filter(f) {
+            rs2_error *e = nullptr;
+            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_DECIMATION_FILTER,
+                                                       &e) && !e) {
+                _block.reset();
+            }
+            error::handle(e);
         }
-       
+
     private:
         friend class context;
 
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_decimation_filter_block(&e),
-                rs2_delete_processing_block);
+                    rs2_create_decimation_filter_block(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             // Redirect options API to the processing block
@@ -807,8 +770,7 @@ namespace rs2
         }
     };
 
-    class temporal_filter : public filter
-    {
+    class temporal_filter : public filter {
     public:
         /**
         * Create temporal filter with default settings
@@ -817,6 +779,7 @@ namespace rs2
         * For more information, check the temporal-filter.cpp
         */
         temporal_filter() : filter(init(), 1) {}
+
         /**
         * Create temporal filter with user settings
         * Temporal filter smooths the image by calculating multiple frames with alpha and delta settings
@@ -834,31 +797,30 @@ namespace rs2
         * 8 - Persist Indefinitely - Persistency will be imposed regardless of the stored history(most aggressive filtering)
         * For more information, check temporal-filter.cpp
         */
-        temporal_filter(float smooth_alpha, float smooth_delta, int persistence_control) : filter(init(), 1)
-        {
+        temporal_filter(float smooth_alpha, float smooth_delta, int persistence_control) : filter(
+                init(), 1) {
             set_option(RS2_OPTION_HOLES_FILL, float(persistence_control));
             set_option(RS2_OPTION_FILTER_SMOOTH_ALPHA, float(smooth_alpha));
             set_option(RS2_OPTION_FILTER_SMOOTH_DELTA, float(smooth_delta));
         }
 
-        temporal_filter(filter f) :filter(f)
-        {
-            rs2_error* e = nullptr;
-            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_TEMPORAL_FILTER, &e) && !e)
-            {
+        temporal_filter(filter f) : filter(f) {
+            rs2_error *e = nullptr;
+            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_TEMPORAL_FILTER,
+                                                       &e) && !e) {
                 _block.reset();
             }
             error::handle(e);
         }
+
     private:
         friend class context;
 
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_temporal_filter_block(&e),
-                rs2_delete_processing_block);
+                    rs2_create_temporal_filter_block(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             // Redirect options API to the processing block
@@ -868,8 +830,7 @@ namespace rs2
         }
     };
 
-    class spatial_filter : public filter
-    {
+    class spatial_filter : public filter {
     public:
         /**
         * Create spatial filter
@@ -878,7 +839,7 @@ namespace rs2
         * delta defines the depth gradient below which the smoothing will occur as number of depth levels
         * For more information, check the spatial-filter.cpp
         */
-        spatial_filter() : filter(init(), 1) { }
+        spatial_filter() : filter(init(), 1) {}
 
         /**
         * Create spatial filter
@@ -889,32 +850,31 @@ namespace rs2
         * \param[in] hole_fill - an in-place heuristic symmetric hole-filling mode applied horizontally during the filter passes.
         *                           Intended to rectify minor artefacts with minimal performance impact
         */
-        spatial_filter(float smooth_alpha, float smooth_delta, float magnitude, float hole_fill) : filter(init(), 1)
-        {
+        spatial_filter(float smooth_alpha, float smooth_delta, float magnitude, float hole_fill)
+                : filter(init(), 1) {
             set_option(RS2_OPTION_FILTER_SMOOTH_ALPHA, float(smooth_alpha));
             set_option(RS2_OPTION_FILTER_SMOOTH_DELTA, float(smooth_delta));
             set_option(RS2_OPTION_FILTER_MAGNITUDE, magnitude);
             set_option(RS2_OPTION_HOLES_FILL, hole_fill);
         }
 
-        spatial_filter(filter f) :filter(f)
-        {
-            rs2_error* e = nullptr;
-            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_SPATIAL_FILTER, &e) && !e)
-            {
+        spatial_filter(filter f) : filter(f) {
+            rs2_error *e = nullptr;
+            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_SPATIAL_FILTER, &e) &&
+                !e) {
                 _block.reset();
             }
             error::handle(e);
         }
+
     private:
         friend class context;
 
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_spatial_filter_block(&e),
-                rs2_delete_processing_block);
+                    rs2_create_spatial_filter_block(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             // Redirect options API to the processing block
@@ -924,32 +884,32 @@ namespace rs2
         }
     };
 
-    class disparity_transform : public filter
-    {
+    class disparity_transform : public filter {
     public:
         /**
         * Create disparity transform filter
         * Converts from depth representation to disparity representation and vice-versa in depth frames
         */
-        disparity_transform(bool transform_to_disparity = true) : filter(init(transform_to_disparity), 1) { }
+        disparity_transform(bool transform_to_disparity = true) : filter(
+                init(transform_to_disparity), 1) {}
 
-        disparity_transform(filter f) :filter(f)
-        {
-            rs2_error* e = nullptr;
-            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_DISPARITY_FILTER, &e) && !e)
-            {
+        disparity_transform(filter f) : filter(f) {
+            rs2_error *e = nullptr;
+            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_DISPARITY_FILTER,
+                                                       &e) && !e) {
                 _block.reset();
             }
             error::handle(e);
         }
+
     private:
         friend class context;
-        std::shared_ptr<rs2_processing_block> init(bool transform_to_disparity)
-        {
-            rs2_error* e = nullptr;
+
+        std::shared_ptr <rs2_processing_block> init(bool transform_to_disparity) {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_disparity_transform_block(uint8_t(transform_to_disparity), &e),
-                rs2_delete_processing_block);
+                    rs2_create_disparity_transform_block(uint8_t(transform_to_disparity), &e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             // Redirect options API to the processing block
@@ -958,22 +918,19 @@ namespace rs2
             return block;
         }
     };
-    
-    class zero_order_invalidation : public filter
-    {
+
+    class zero_order_invalidation : public filter {
     public:
         /**
         * Create zero order fix filter
         * The filter fixes the zero order artifact
         */
-        zero_order_invalidation() : filter(init())
-        {}
+        zero_order_invalidation() : filter(init()) {}
 
-        zero_order_invalidation(filter f) :filter(f)
-        {
-            rs2_error* e = nullptr;
-            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_ZERO_ORDER_FILTER, &e) && !e)
-            {
+        zero_order_invalidation(filter f) : filter(f) {
+            rs2_error *e = nullptr;
+            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_ZERO_ORDER_FILTER,
+                                                       &e) && !e) {
                 _block.reset();
             }
             error::handle(e);
@@ -982,32 +939,28 @@ namespace rs2
     private:
         friend class context;
 
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_zero_order_invalidation_block(&e),
-                rs2_delete_processing_block);
+                    rs2_create_zero_order_invalidation_block(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             return block;
         }
     };
 
-    class depth_huffman_decoder : public filter
-    {
+    class depth_huffman_decoder : public filter {
     public:
         /**
         * Create decoder for Huffman-code compressed Depth frames
         */
-        depth_huffman_decoder() : filter(init())
-        {}
+        depth_huffman_decoder() : filter(init()) {}
 
-        depth_huffman_decoder(filter f) :filter(f)
-        {
-            rs2_error* e = nullptr;
-            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_DEPTH_HUFFMAN_DECODER, &e) && !e)
-            {
+        depth_huffman_decoder(filter f) : filter(f) {
+            rs2_error *e = nullptr;
+            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_DEPTH_HUFFMAN_DECODER,
+                                                       &e) && !e) {
                 _block.reset();
             }
             error::handle(e);
@@ -1016,20 +969,18 @@ namespace rs2
     private:
         friend class context;
 
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_huffman_depth_decompress_block(&e),
-                rs2_delete_processing_block);
+                    rs2_create_huffman_depth_decompress_block(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             return block;
         }
     };
 
-    class hole_filling_filter : public filter
-    {
+    class hole_filling_filter : public filter {
     public:
         /**
         * Create hole filling filter
@@ -1045,29 +996,27 @@ namespace rs2
         * 1 - farest_from_around - Use the value from the neighboring pixel which is furthest away from the sensor
         * 2 - nearest_from_around - - Use the value from the neighboring pixel closest to the sensor
         */
-        hole_filling_filter(int mode) : filter(init(), 1)
-        {
+        hole_filling_filter(int mode) : filter(init(), 1) {
             set_option(RS2_OPTION_HOLES_FILL, float(mode));
         }
 
-        hole_filling_filter(filter f) :filter(f)
-        {
-            rs2_error* e = nullptr;
-            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_HOLE_FILLING_FILTER, &e) && !e)
-            {
+        hole_filling_filter(filter f) : filter(f) {
+            rs2_error *e = nullptr;
+            if (!rs2_is_processing_block_extendable_to(f.get(), RS2_EXTENSION_HOLE_FILLING_FILTER,
+                                                       &e) && !e) {
                 _block.reset();
             }
             error::handle(e);
         }
+
     private:
         friend class context;
 
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_hole_filling_filter_block(&e),
-                rs2_delete_processing_block);
+                    rs2_create_hole_filling_filter_block(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             // Redirect options API to the processing block
@@ -1077,8 +1026,7 @@ namespace rs2
         }
     };
 
-    class rates_printer : public filter
-    {
+    class rates_printer : public filter {
     public:
         /**
         * Create hole filling processing block
@@ -1089,12 +1037,11 @@ namespace rs2
     private:
         friend class context;
 
-        std::shared_ptr<rs2_processing_block> init()
-        {
-            rs2_error* e = nullptr;
+        std::shared_ptr <rs2_processing_block> init() {
+            rs2_error *e = nullptr;
             auto block = std::shared_ptr<rs2_processing_block>(
-                rs2_create_rates_printer_block(&e),
-                rs2_delete_processing_block);
+                    rs2_create_rates_printer_block(&e),
+                    rs2_delete_processing_block);
             error::handle(e);
 
             return block;

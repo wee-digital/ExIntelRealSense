@@ -36,9 +36,9 @@ fun uiThread(delay: Long, block: () -> Unit) {
 }
 
 fun FragmentActivity?.addFragment(
-    fragment: Fragment, @IdRes container: Int,
-    backStack: Boolean = true,
-    animations: IntArray? = null
+        fragment: Fragment, @IdRes container: Int,
+        backStack: Boolean = true,
+        animations: IntArray? = null
 ) {
     this ?: return
     val tag = fragment::class.java.simpleName
@@ -49,9 +49,9 @@ fun FragmentActivity?.addFragment(
 }
 
 fun FragmentActivity?.replaceFragment(
-    fragment: Fragment, @IdRes container: Int,
-    backStack: Boolean = true,
-    animations: IntArray? = null
+        fragment: Fragment, @IdRes container: Int,
+        backStack: Boolean = true,
+        animations: IntArray? = null
 ) {
     this ?: return
     val tag = fragment::class.java.simpleName
@@ -89,16 +89,16 @@ fun FragmentActivity?.remove(tag: String?, animations: IntArray? = null) {
 }
 
 fun FragmentManager.scheduleTransaction(
-    block: FragmentTransaction.() -> Unit,
-    animations: IntArray? = null
+        block: FragmentTransaction.() -> Unit,
+        animations: IntArray? = null
 ) {
 
     val transaction = beginTransaction()
     if (null != animations) transaction.setCustomAnimations(
-        animations[0],
-        animations[1],
-        animations[2],
-        animations[3]
+            animations[0],
+            animations[1],
+            animations[2],
+            animations[3]
     )
     transaction.block()
     transaction.commitAllowingStateLoss()
@@ -176,11 +176,11 @@ fun Rect.cropPortrait(bitmap: Bitmap): Bitmap? {
     val copiedBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true)
     return try {
         val crop = Bitmap.createBitmap(
-            copiedBitmap,
-            rectCrop.left,
-            rectCrop.top,
-            rectCrop.width(),
-            rectCrop.height()
+                copiedBitmap,
+                rectCrop.left,
+                rectCrop.top,
+                rectCrop.width(),
+                rectCrop.height()
         )
         crop
     } catch (t: Throwable) {
@@ -286,11 +286,11 @@ fun Rect.getFace640x320(): Rect {
  * Utils
  */
 private fun getFaceDegreeY(
-    pointEyeLeft: Point,
-    pointEyeRight: Point,
-    pointNose: Point,
-    pointMouthLeft: Point,
-    pointMouthRight: Point
+        pointEyeLeft: Point,
+        pointEyeRight: Point,
+        pointNose: Point,
+        pointMouthLeft: Point,
+        pointMouthRight: Point
 ): Double {
     val pointCenterEye = getCenterPoint(pointEyeLeft, pointEyeRight)
     val pointCenterMouth = getCenterPoint(pointMouthLeft, pointMouthRight)
@@ -303,11 +303,11 @@ private fun getFaceDegreeY(
 }
 
 private fun getFaceDegreeX(
-    pointEyeLeft: Point,
-    pointEyeRight: Point,
-    pointNose: Point,
-    pointMouthLeft: Point,
-    pointMouthRight: Point
+        pointEyeLeft: Point,
+        pointEyeRight: Point,
+        pointNose: Point,
+        pointMouthLeft: Point,
+        pointMouthRight: Point
 ): Double {
     val pointCenterEyeMouthLeft = getCenterPoint(pointEyeLeft, pointMouthLeft)
     val pointCenterEyeMouthRight = getCenterPoint(pointEyeRight, pointMouthRight)
@@ -337,9 +337,9 @@ private fun getCenterPoint(point1: Point, point2: Point): Point {
 
 fun distancePoint(a: Point, b: Point): Float {
     return sqrt(
-        (a.x.toDouble() - b.x.toDouble()).pow(2.0) + (a.y.toDouble() - b.y.toDouble()).pow(
-            2.0
-        )
+            (a.x.toDouble() - b.x.toDouble()).pow(2.0) + (a.y.toDouble() - b.y.toDouble()).pow(
+                    2.0
+            )
     ).toFloat()
 }
 

@@ -38,10 +38,10 @@ class RealSenseView : SurfaceView {
         mHolder = holder
         mHolder?.addCallback(object : SurfaceHolder.Callback {
             override fun surfaceChanged(
-                holder: SurfaceHolder?,
-                format: Int,
-                width: Int,
-                height: Int
+                    holder: SurfaceHolder?,
+                    format: Int,
+                    width: Int,
+                    height: Int
             ) {
                 holder!!.setFixedSize(width, height)
                 mHolder = holder
